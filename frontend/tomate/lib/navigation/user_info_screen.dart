@@ -200,7 +200,8 @@ class _UserInfoScreenState extends ConsumerState<UserInfoScreen> {
                         controller: _nicknameController,
                         hintText: '닉네임 ( 특수문자 불가능 )',
                         inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r'[^\w가-힣]')),
+                     // 방법 3: 공백도 허용하려면
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]'))
                         ],
                       ),
 
