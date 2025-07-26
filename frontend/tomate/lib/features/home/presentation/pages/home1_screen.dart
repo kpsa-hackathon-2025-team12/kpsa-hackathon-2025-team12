@@ -7,7 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../common/widgets/common_app_bar.dart';
 
 class Home1Screen extends ConsumerStatefulWidget {
-  const Home1Screen({super.key});
+  final int level; // 단계별 카드 표시를 위한 파라미터 (1: 1단계, 2: 2단계)
+
+  const Home1Screen({super.key, this.level = 1}); // 레벨 수정
 
   @override
   ConsumerState<Home1Screen> createState() => _Home1ScreenState();
@@ -193,7 +195,9 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _walkAnimationController,
             builder: (context, child) {
               return Positioned(
-                left: Platform.isAndroid ? _walkHorizontalAnimation.value : _walkHorizontalAnimation.value + 30,
+                left: Platform.isAndroid
+                    ? _walkHorizontalAnimation.value
+                    : _walkHorizontalAnimation.value + 30,
                 bottom:
                     10 +
                     (_walkVerticalAnimation.value *
@@ -556,11 +560,32 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
                 itemBuilder: (context, index) {
                   bool isActive = index == _currentPage;
 
-                  final cards = [
+                  // 단계별 카드 데이터 정의
+                  final level1Cards = [
+                    // TODO: 1단계용 카드들 - 아래 내용을 원하는 대로 수정하세요
+                    {
+                      'subtitle': '근처 대형마트에 들어가서\n1분만 걸어다녀볼까요?',
+                      'boldText': '1분만 걸어다녀볼까요?',
+                      'date': '7월 27일 오늘의 용기',
+                    },
+                    {
+                      'subtitle': '한 정거장 거리만 걷고\n돌아오는 산책 어떨까요?',
+                      'boldText': '산책',
+                      'date': '7월 27일 오늘의 용기',
+                    },
+                    {
+                      'subtitle': '엘레베이터 앞에 가서 버튼만\n눌러볼까요?',
+                      'boldText': '엘레베이터 앞',
+                      'date': '7월 27일 오늘의 용기',
+                    },
+                  ];
+
+                  final level2Cards = [
+                    // 현재 2단계용 카드들 (기존 내용 유지)
                     {
                       'subtitle': '오늘은 집에서 가까운\n지하철역 입구까지 가볼까요?',
                       'boldText': '지하철역 입구',
-                      'date': '7월 26일 오늘의 용기',
+                      'date': '7월 27일 오늘의 용기',
                     },
                     {
                       'subtitle': '한 정거장 거리만 걷고\n돌아오는 산책 어떨까요?',
@@ -570,9 +595,12 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
                     {
                       'subtitle': '오늘은 책을 들고 공원 밴치에\n앉아 10분만 머물러볼까요?',
                       'boldText': '10분만 머물러',
-                      'date': '7월 28일 오늘의 용기',
+                      'date': '7월 27일 오늘의 용기',
                     },
                   ];
+
+                  // level 파라미터에 따라 적절한 카드 선택
+                  final cards = widget.level == 1 ? level1Cards : level2Cards;
 
                   final card = cards[index];
                   return _buildCourageCard(
