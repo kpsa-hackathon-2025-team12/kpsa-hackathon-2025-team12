@@ -12,8 +12,8 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // GIF 이미지 표시 영역 (전체 화면)
-            GifImageView()
+            // 이미지 시퀀스 애니메이션 영역 (전체 화면)
+            ImageSequenceAnimationView()
             
             Spacer()
                 .frame(height: 16)
@@ -34,12 +34,15 @@ struct ContentView: View {
     }
 }
 
-// MARK: - GIF 이미지 뷰 (전체 화면)
-struct GifImageView: View {
+// MARK: - 이미지 시퀀스 애니메이션 뷰
+struct ImageSequenceAnimationView: View {
+    @State private var currentFrame = 0
+    @State private var animationTimer: Timer?
+    
     var body: some View {
         GeometryReader { geometry in
-            if let gifImage = loadGifImage() {
-                Image(uiImage: gifImage)
+            if let image = loadAnimationFrame(currentFrame) {
+                Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(
@@ -48,12 +51,11 @@ struct GifImageView: View {
                     )
                     .clipped()
             } else {
-                // GIF 파일이 없을 때 플레이스홀더
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
                     .frame(
                         width: geometry.size.width,
-                        height: geometry.size.height * 0.7
+                        height: geometry.size.height * 1.58
                     )
                     .overlay(
                         VStack(spacing: 8) {
@@ -61,50 +63,42 @@ struct GifImageView: View {
                                 .font(.largeTitle)
                                 .foregroundColor(.gray)
                             
-                            Text("GIF")
+                            Text("애니메이션")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                         }
                     )
             }
         }
+        .onAppear {
+            startAnimation()
+        }
+        .onDisappear {
+            stopAnimation()
+        }
     }
     
-    // Bundle에서 GIF 파일 로드
-    private func loadGifImage() -> UIImage? {
-        print("GIF 로드 시도 중...")
-        
-        // 여러 가능한 파일 이름으로 시도
-        let possibleNames = ["watch.gif", "watch", "토마토.gif", "tomato.gif"]
-        
-        for fileName in possibleNames {
-            print("시도 중: \(fileName)")
-            
-            if let path = Bundle.main.path(forResource: fileName, ofType: nil) {
-                print("파일 경로 찾음: \(path)")
-                if let data = NSData(contentsOfFile: path) {
-                    print("데이터 로드 성공: \(data.length) bytes")
-                    return UIImage(data: data as Data)
-                } else {
-                    print("데이터 로드 실패")
-                }
-            }
-            
-            // 확장자 없이 시도
-            let nameWithoutExtension = fileName.replacingOccurrences(of: ".gif", with: "")
-            if let path = Bundle.main.path(forResource: nameWithoutExtension, ofType: "gif") {
-                print("확장자 분리 경로 찾음: \(path)")
-                if let data = NSData(contentsOfFile: path) {
-                    print("확장자 분리 데이터 로드 성공: \(data.length) bytes")
-                    return UIImage(data: data as Data)
-                }
-            }
+    // 애니메이션 프레임 로드
+    private func loadAnimationFrame(_ frameIndex: Int) -> UIImage? {
+        let imageName = "anim\(frameIndex)"
+        return UIImage(named: imageName)
+    }
+    
+    // 애니메이션 시작
+    private func startAnimation() {
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+            currentFrame = (currentFrame + 1) % 20 // 0~19 프레임 순환
         }
-        
-        print("모든 시도 실패")
-        return nil
+    }
+    
+    // 애니메이션 중지
+    private func stopAnimation() {
+        animationTimer?.invalidate()
+        animationTimer = nil
     }
 }
+
+
 
 // MARK: - 간단한 심박수 뷰 (컨테이너 없이)
 struct SimpleHeartRateView: View {

@@ -140,7 +140,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
       // API 호출 - 입력창에서 직접 보낼 때는 request 필드에 텍스트 전송
       final response = await ref
           .read(apiProvider.notifier)
-          .postAsync('/chat/prompt', {
+          .postAsync('/chat/default', {
             "request": message.trim(),
             "userId": "kko_4364192436",
             "llmModel": "gemini-2.0-flash",
@@ -783,7 +783,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: Platform.isAndroid ? 28 : 16, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: const Color(0xFF4E4E4E), width: 1),
@@ -794,7 +794,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
           style: TextStyle(
             color: Colors.black,
             fontSize: 12,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
