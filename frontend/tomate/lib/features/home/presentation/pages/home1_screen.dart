@@ -9,7 +9,7 @@ import '../../../../common/widgets/common_app_bar.dart';
 class Home1Screen extends ConsumerStatefulWidget {
   final int level; // 단계별 카드 표시를 위한 파라미터 (1: 1단계, 2: 2단계)
 
-  const Home1Screen({super.key, this.level = 1}); // 레벨 수정
+  const Home1Screen({super.key, this.level = 2}); // 레벨 수정
 
   @override
   ConsumerState<Home1Screen> createState() => _Home1ScreenState();
@@ -734,7 +734,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       child: Stack(
         children: [
           Positioned(
-            left: 0,
+            left: MediaQuery.of(context).size.width > 600 ? 140 : 0,
             bottom: 0,
             child: Image.asset('assets/icons/mart.png', width: 104, height: 94),
           ),
@@ -744,7 +744,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             builder: (context, child) {
               return Positioned(
                 left: Platform.isAndroid
-                    ? _level1WalkHorizontal1.value
+                    ? MediaQuery.of(context).size.width > 600 ? _level1WalkHorizontal1.value + 180 : _level1WalkHorizontal1.value
                     : _level1WalkHorizontal1.value + 46,
                 bottom:
                     10 +
@@ -808,7 +808,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       child: Stack(
         children: [
           Positioned(
-            left: Platform.isAndroid ? 20 : 40,
+            left: Platform.isAndroid ? MediaQuery.of(context).size.width > 600 ? 180 : 20 : 40,
             bottom: 0,
             child: Image.asset(
               'assets/icons/elevator.png',
@@ -821,7 +821,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _bounceAnimation,
             builder: (context, child) {
               return Positioned(
-                right: Platform.isAndroid ? 28 : 20,
+                right: Platform.isAndroid ? MediaQuery.of(context).size.width > 600? 80 : 28 : 20,
                 bottom: 20 + _bounceAnimation.value, // 제자리에서 위아래로 튀기
                 child: Image.asset(
                   'assets/icons/right_tomate.png',
@@ -845,7 +845,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
         children: [
           // 산책로/정거장 이미지 (정적)
           Positioned(
-            left: 0,
+            left: MediaQuery.of(context).size.width > 600 ? 160 :  0,
             bottom: 0,
             child: Image.asset(
               'assets/icons/walk.png', // 산책로/정거장 이미지
@@ -858,7 +858,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _bounceAnimation,
             builder: (context, child) {
               return Positioned(
-                right: Platform.isAndroid ? 30 : 40,
+                right: Platform.isAndroid ? MediaQuery.of(context).size.width > 600 ? 80 : 30 : 40,
                 bottom: 20 + _bounceAnimation.value, // 제자리에서 위아래로 튀기
                 child: Image.asset(
                   'assets/icons/right_tomate.png', // 산책하는 토마토

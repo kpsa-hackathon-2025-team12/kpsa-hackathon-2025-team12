@@ -199,27 +199,32 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-      child: Text.rich(
-        TextSpan(
-          children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text.rich(
             TextSpan(
-              text: '대중교통',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
+              children: [
+                TextSpan(
+                  text: '대중교통',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextSpan(
+                  text: '을 회피 하고 싶은 날이 가장 많았어요.',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-            TextSpan(
-              text: '을 회피 하고 싶은 날이 가장 많았어요.',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -674,7 +679,7 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text.rich(
             TextSpan(

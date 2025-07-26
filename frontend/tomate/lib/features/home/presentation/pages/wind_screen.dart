@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -12,9 +14,9 @@ class _WindScreenState extends State<WindScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFF5),
+      backgroundColor: const Color(0xFFFBFCF4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFFF5),
+        backgroundColor: const Color(0xFFFBFCF4),
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Text(
@@ -34,10 +36,16 @@ class _WindScreenState extends State<WindScreen> {
               child: Column(
                 children: [
                   // 호흡 애니메이션 GIF
-                  Image.asset(
-                    'assets/animations/breathe.gif',
-                    key: UniqueKey(), // 다른 탭으로 갔다가 돌아올 때마다 gif가 처음부터 재생
+                  SizedBox(
+                    width: Platform.isAndroid ? double.infinity : double.infinity,
+                    height: Platform.isAndroid ? 400 : 380,
+                    child: Image.asset(
+                      'assets/animations/breathe.gif',
+                      key: UniqueKey(), // 다른 탭으로 갔다가 돌아올 때마다 gif가 처음부터 재생
+                      fit: BoxFit.contain,
+                    ),
                   ),
+                  SizedBox(height: 40,),
 
                   // 안내 메시지
                   Padding(
