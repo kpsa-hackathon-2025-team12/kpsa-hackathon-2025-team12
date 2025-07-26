@@ -1,7 +1,7 @@
-package com.hack.kpsahack12.user.controller;
+package com.hack.kpsahack12.member.controller;
 import com.hack.kpsahack12.model.dto.UserChatRequestDto;
 import com.hack.kpsahack12.model.dto.UserChatResponseDto;
-import com.hack.kpsahack12.user.service.UserChatService;
+import com.hack.kpsahack12.member.service.UserChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.hack.kpsahack12.user.service;
+package com.hack.kpsahack12.member.service;
 
 import com.hack.kpsahack12.enums.LlmType;
 import com.hack.kpsahack12.llm.gemini.request.GeminiChatRequestDto;

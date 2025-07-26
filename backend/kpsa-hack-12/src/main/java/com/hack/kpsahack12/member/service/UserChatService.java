@@ -1,4 +1,4 @@
-package com.hack.kpsahack12.user.service;
+package com.hack.kpsahack12.member.service;
 
 import com.hack.kpsahack12.model.dto.UserChatRequestDto;
 import com.hack.kpsahack12.model.dto.UserChatResponseDto;
