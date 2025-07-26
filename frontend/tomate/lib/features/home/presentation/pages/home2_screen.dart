@@ -11,8 +11,18 @@ class Home2Screen extends ConsumerStatefulWidget {
 class _Home2ScreenState extends ConsumerState<Home2Screen> {
   bool _isFirstButtonPressed = false;
   bool _isSecondButtonPressed = false;
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF5),
       appBar: AppBar(
@@ -30,10 +40,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +205,6 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 14,
-                                              fontFamily: 'Pretendard',
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -203,7 +213,6 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                                             style: TextStyle(
                                               color: const Color(0xFF828282),
                                               fontSize: 11,
-                                              fontFamily: 'Pretendard',
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
@@ -216,6 +225,84 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // 하단 채팅 입력창
+            Transform.translate(
+              offset: Offset(
+                0,
+                keyboardHeight > 0 ? 50 : 0,
+              ), // 키보드가 올라오면 위로 이동
+              child: Container(
+                padding: EdgeInsets.fromLTRB(
+                  26,
+                  16,
+                  26,
+                  keyboardHeight > 0 ? 0 : 48, // 키보드가 올라오면 하단 패딩 줄이기
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 1,
+                              color: const Color(0xFFCBCBCB),
+                            ),
+                            borderRadius: BorderRadius.circular(29),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _messageController,
+                          decoration: InputDecoration(
+                            hintText: '마토랑 의사소통을 해봐요:)',
+                            hintStyle: TextStyle(
+                              color: Color(0xFFCBCBCB),
+                              fontSize: 14,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFE6E6E6),
+                        shape: OvalBorder(),
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            // 메시지 전송 로직
+                            if (_messageController.text.trim().isNotEmpty) {
+                              // TODO: 메시지 전송 구현
+                              print('메시지 전송: ${_messageController.text}');
+                              _messageController.clear();
+                            }
+                          },
+                          icon: Center(
+                            child: Icon(
+                              Icons.arrow_upward_outlined,
+                              color: Color(0xFF989898),
+                              size: 22,
+                            ),
+                          ),
                         ),
                       ),
                     ),

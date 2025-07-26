@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tomate/navigation/kakao_webview_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -212,40 +213,70 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _showLoginSuccessAndNavigate(String platform) async {
     try {
       // 백엔드에서 카카오 OAuth URL 받아오기
-      final response = await ref
-          .read(apiProvider.notifier)
-          .getAsync('/oauth2/login/kakao');
+      if (platform == "카카오") {
+        final response = await ref
+            .read(apiProvider.notifier)
+            .getAsync('/oauth2/login/kakao');
 
-      final String? kakaoAuthUrl = response.data["data"];
+        final String? kakaoAuthUrl = response.data["data"];
 
-      if (kakaoAuthUrl == null) {
-        _showErrorSnackbar('로그인 URL을 받아오지 못했습니다.');
-        return;
-      }
+        if (kakaoAuthUrl == null) {
+          _showErrorSnackbar('로그인 URL을 받아오지 못했습니다.');
+          return;
+        }
 
-      print('카카오 로그인 URL: $kakaoAuthUrl');
+        print('카카오 로그인 URL: $kakaoAuthUrl');
 
-      // 카카오 동의 화면을 브라우저에서 열기
-      final Uri authUri = Uri.parse(kakaoAuthUrl);
+        // 웹뷰 스크린으로 카카오 로그인 처리
+        final bool success =
+            await Navigator.of(context).push<bool>(
+              MaterialPageRoute(
+                builder: (context) => KakaoWebViewScreen(authUrl: kakaoAuthUrl),
+              ),
+            ) ??
+            false;
 
-      try {
-        final bool launched = await launchUrl(
-          authUri,
-          mode: LaunchMode.externalApplication, // 외부 브라우저에서 열기
-        );
-
-        if (launched) {
-          // 사용자가 브라우저에서 동의했다고 가정하고 성공 처리
+        if (success) {
+          print('카카오 로그인 성공!');
           await _handleLoginSuccess();
         } else {
-          _showErrorSnackbar('브라우저를 열 수 없습니다.');
+          print('카카오 로그인 취소 또는 실패');
+          _showErrorSnackbar('카카오 로그인이 취소되었습니다.');
         }
-      } catch (e) {
-        print('URL 실행 오류: $e');
-        _showErrorSnackbar('카카오 로그인을 실행할 수 없습니다.');
+      } else if (platform == "네이버") {
+        final response = await ref
+            .read(apiProvider.notifier)
+            .getAsync('/oauth2/login/naver');
+
+        final String? NaverAuthUrl = response.data["data"];
+
+        if (NaverAuthUrl == null) {
+          _showErrorSnackbar('로그인 URL을 받아오지 못했습니다.');
+          return;
+        }
+
+        // 카카오 동의 화면을 브라우저에서 열기
+        final Uri authUri = Uri.parse(NaverAuthUrl);
+
+        try {
+          final bool launched = await launchUrl(
+            authUri,
+            mode: LaunchMode.externalApplication, // 외부 브라우저에서 열기
+          );
+
+          if (launched) {
+            // 사용자가 브라우저에서 동의했다고 가정하고 성공 처리
+            await _handleLoginSuccess();
+          } else {
+            _showErrorSnackbar('브라우저를 열 수 없습니다.');
+          }
+        } catch (e) {
+          print('URL 실행 오류: $e');
+          _showErrorSnackbar('카카오 로그인을 실행할 수 없습니다.');
+        }
       }
     } catch (error) {
-      print('카카오 로그인 오류: $error');
+      print('소셜 로그인 오류: $error');
       _showErrorSnackbar('로그인 중 오류가 발생했습니다.');
     }
   }
@@ -253,16 +284,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _handleLoginSuccess() async {
     // 로그인 성공 스낵바 표시
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('카카오 로그인이 완료되었습니다!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
-
       // 2초 후 다음 화면으로 이동
-      Future.delayed(Duration(seconds: 2), () {
         if (mounted) {
           // TODO: 신규 사용자인지 기존 사용자인지에 따라 분기 처리
           // 현재는 신규 사용자로 가정
@@ -270,7 +292,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           // GoRouter.of(context).goNamed(AppRoutes.userInfoScreen.name);
           GoRouter.of(context).goNamed(AppRoutes.home1Screen.name);
         }
-      });
     }
   }
 

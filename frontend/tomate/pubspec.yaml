@@ -77,6 +77,9 @@ dependencies:
 
   # URL 런처
   url_launcher: ^6.3.0
+  
+  # 웹뷰
+  flutter_inappwebview: ^6.0.0
 
   # 한글 설정
   flutter_localizations:

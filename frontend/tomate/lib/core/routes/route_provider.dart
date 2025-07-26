@@ -219,6 +219,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           final isWindActive = currentTab == 'windScreen';
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             body: child,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
@@ -232,10 +233,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRouter.of(context).goNamed(AppRoutes.windScreen.name);
                 },
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    width: 1,
-                    color: const Color(0xFFCBCBCB),
-                  ),
+                  side: BorderSide(width: 1, color: const Color(0xFFCBCBCB)),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Center(
