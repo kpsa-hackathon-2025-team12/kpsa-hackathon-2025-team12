@@ -20,5 +20,10 @@ public class MemberLlmData {
     @JoinColumn(name = "member_id", nullable = false, referencedColumnName = "id")
     private Members member;
 
+    private int type;
+
+    private int buttonType;
+
     private String memberLogs;
+
 }
