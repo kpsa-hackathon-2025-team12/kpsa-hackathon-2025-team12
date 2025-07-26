@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94268790412",
+    "project_id": "pharmaceutical-hackathon",
+    "storage_bucket": "pharmaceutical-hackathon.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94268790412:android:c4e74f8fb6171f9bd18da9",
+        "android_client_info": {
+          "package_name": "com.tomate.tomate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYgeesSI9dxCNsvg30EoJMnoxDZjK7qVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
