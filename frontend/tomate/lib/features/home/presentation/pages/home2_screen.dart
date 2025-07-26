@@ -40,6 +40,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   List<ChatMessage> _messages = [];
+  bool _showQuizButtons = false; // 퀴즈 버튼 표시 여부
 
   @override
   void dispose() {
@@ -47,6 +48,22 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  // 새 채팅 시작
+  void _startNewChat() {
+    setState(() {
+      _messages.clear();
+      _showQuizButtons = false; // 퀴즈 버튼 숨기기
+    });
+    // 스크롤을 맨 위로 이동
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   // 스크롤을 맨 아래로 이동
@@ -147,7 +164,12 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 12.0),
-            child: GestureDetector(child: Icon(Icons.add_outlined, size: 22)),
+            child: GestureDetector(
+              onTap: () {
+                _startNewChat();
+              },
+              child: Icon(Icons.add_outlined, size: 22),
+            ),
           ),
         ],
         centerTitle: true,
@@ -291,13 +313,16 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                                     final response = await ref
                                         .read(apiProvider.notifier)
                                         .postAsync('/chat/default', {
-                                          "request": "1",
-                                          "userId": "kko_3006418247",
+                                          "request": "",
+                                          "userId": "kko_4364192436",
                                           "llmModel": "gemini-2.0-flash",
                                         });
 
                                     print(response);
                                     _handleApiResponse(response);
+                                    setState(() {
+                                      _showQuizButtons = true; // 퀴즈 버튼 표시
+                                    });
                                   },
                                   onTapDown: (_) {
                                     setState(() {
@@ -537,7 +562,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
               ),
               padding: EdgeInsets.fromLTRB(19, 16, 19, 0),
               decoration: ShapeDecoration(
-                color: const Color(0xFFFFE8E8),
+                color: const Color(0xFFFFEEE1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(4),
@@ -547,13 +572,32 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                   ),
                 ),
               ),
-              child: Text(
-                message.memberLogs,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message.memberLogs,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  // 퀴즈 버튼들 (마지막 시스템 메시지이고 _showQuizButtons가 true일 때만 표시)
+                  if (_showQuizButtons &&
+                      _messages.isNotEmpty &&
+                      _messages.last == message) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildQuizButton('한 번 더'),
+                        SizedBox(width: 8),
+                        _buildQuizButton('이제 그만'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ],
               ),
             ),
             Positioned(
@@ -594,14 +638,17 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                 SizedBox(height: 20),
 
                 _buildDrawerItem(Icons.chat_outlined, '이야기가 하고 싶어요.'),
-                _buildDrawerItem(Icons.chat_outlined, '생각 전환을 하고 싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '싶어요.'),
                 _buildDrawerItem(Icons.chat_outlined, '나의 감정을 컨트롤 하기 힘들어.'),
                 _buildDrawerItem(Icons.chat_outlined, '오늘 많이 힘들었어..'),
 
                 SizedBox(height: 20),
 
                 _buildDrawerItem(Icons.chat_outlined, '난 대표님만 보면 숨이 막혀..'),
-                _buildDrawerItem(Icons.chat_outlined, '열심히 해도 왜 월급은 쥐 꼴만 할까..??'),
+                _buildDrawerItem(
+                  Icons.chat_outlined,
+                  '열심히 해도 왜 월급은 쥐 꼴만 할까..??',
+                ),
               ],
             ),
           ),
@@ -667,6 +714,35 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         // 각 메뉴별 기능 추가 가능
       },
       contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 2),
+    );
+  }
+
+  // 퀴즈 버튼 빌더
+  Widget _buildQuizButton(String text) {
+    return GestureDetector(
+      onTap: () {
+        // 버튼 클릭 시 퀴즈 버튼 숨기기
+        setState(() {
+          _showQuizButtons = false;
+        });
+        // 추가 기능 구현 가능
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFF4D4D4D), width: 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 }
