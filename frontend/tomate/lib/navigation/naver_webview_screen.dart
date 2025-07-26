@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NaverWebViewScreen extends StatefulWidget {
+import '../core/api/api_provider.dart';
+
+class NaverWebViewScreen extends ConsumerStatefulWidget {
   final String authUrl;
 
   const NaverWebViewScreen({Key? key, required this.authUrl}) : super(key: key);
 
   @override
-  State<NaverWebViewScreen> createState() => _NaverWebViewScreenState();
+  ConsumerState<NaverWebViewScreen> createState() => _NaverWebViewScreenState();
 }
 
-class _NaverWebViewScreenState extends State<NaverWebViewScreen> {
+class _NaverWebViewScreenState extends ConsumerState<NaverWebViewScreen> {
   InAppWebViewController? webViewController;
   bool isLoading = true;
 
@@ -75,6 +78,12 @@ class _NaverWebViewScreenState extends State<NaverWebViewScreen> {
                   (url.startsWith('https://localhost') &&
                       url.contains('code='))) {
                 print('네이버 로그인 성공 감지: $url');
+
+                final response = await ref
+                    .read(apiProvider.notifier)
+                    .getQueryAsync('/oauth2/callback/naver', {
+                  'code': url,
+                });
 
                 // 1초 후 성공 결과와 함께 화면 닫기
                 Future.delayed(Duration(milliseconds: 1000), () {

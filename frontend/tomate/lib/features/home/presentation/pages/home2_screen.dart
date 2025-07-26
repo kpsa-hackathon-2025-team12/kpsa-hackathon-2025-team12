@@ -1,5 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tomate/core/api/api_provider.dart';
+
+// 메시지 데이터 모델
+class ChatMessage {
+  final String memberLogs;
+  final int buttonType;
+  final int idx;
+  final int type; // 0: 사용자, 1: 시스템
+
+  ChatMessage({
+    required this.memberLogs,
+    required this.buttonType,
+    required this.idx,
+    required this.type,
+  });
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    return ChatMessage(
+      memberLogs: json['memberLogs'] ?? '',
+      buttonType: json['buttonType'] ?? 0,
+      idx: json['idx'] ?? 0,
+      type: json['type'] ?? 0,
+    );
+  }
+}
 
 class Home2Screen extends ConsumerStatefulWidget {
   const Home2Screen({super.key});
@@ -12,11 +37,84 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   bool _isFirstButtonPressed = false;
   bool _isSecondButtonPressed = false;
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
+  List<ChatMessage> _messages = [];
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
+    _focusNode.dispose();
     super.dispose();
+  }
+
+  // 스크롤을 맨 아래로 이동
+  void _scrollToBottom() {
+    // 키보드가 완전히 올라온 후 한 번만 부드럽게 스크롤
+    Future.delayed(Duration(milliseconds: 300), () {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 800),
+          curve: Curves.easeOutCubic,
+        );
+      }
+    });
+  }
+
+  // 메시지를 리스트에 추가하고 스크롤을 맨 아래로 이동
+  void _addMessages(List<ChatMessage> newMessages) {
+    setState(() {
+      _messages.addAll(newMessages);
+    });
+    _scrollToBottom();
+  }
+
+  // API 응답 처리
+  void _handleApiResponse(dynamic response) {
+    if (response != null &&
+        response.data != null &&
+        response.data['data'] != null) {
+      List<ChatMessage> newMessages = [];
+      for (var messageData in response.data['data']) {
+        newMessages.add(ChatMessage.fromJson(messageData));
+      }
+      _addMessages(newMessages);
+    }
+  }
+
+  // 메시지 전송
+  Future<void> _sendMessage(String message) async {
+    if (message.trim().isEmpty) return;
+
+    // 사용자 메시지를 먼저 추가
+    _addMessages([
+      ChatMessage(
+        memberLogs: message,
+        buttonType: 0,
+        idx: DateTime.now().millisecondsSinceEpoch,
+        type: 0, // 사용자 메시지
+      ),
+    ]);
+
+    _messageController.clear();
+
+    try {
+      // API 호출 (실제 API 엔드포인트에 맞게 수정 필요)
+      final response = await ref.read(apiProvider.notifier).postAsync(
+        '/chat/message',
+        {
+          "message": message,
+          "userId": "kko_3006418247",
+          "llmModel": "gemini-2.0-flash",
+        },
+      );
+
+      _handleApiResponse(response);
+    } catch (e) {
+      print('메시지 전송 오류: $e');
+    }
   }
 
   @override
@@ -44,189 +142,240 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
           children: [
             Expanded(
               child: SingleChildScrollView(
+                controller: _scrollController,
                 padding: EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 30),
-                    // 토마토 아이콘
-                    Image.asset(
-                      'assets/icons/mini_tomate.png',
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.contain,
-                    ),
-                    Container(
-                      width: 215,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFFFEEE1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(4),
-                            topRight: Radius.circular(18),
-                            bottomLeft: Radius.circular(18),
-                            bottomRight: Radius.circular(18),
+                    // 기존 토마토 메시지 (항상 보이도록 유지)
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 15),
+                          width: 215,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xFFFFEEE1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(4),
+                                topRight: Radius.circular(18),
+                                bottomLeft: Radius.circular(18),
+                                bottomRight: Radius.circular(18),
+                              ),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: [
+                                Text(
+                                  '지금 마음에 가장 가까운 느낌을\n골라볼까요? 마토가 함께할게요!',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final response = await ref
+                                        .read(apiProvider.notifier)
+                                        .postAsync('/chat/default', {
+                                          "request": "0",
+                                          "userId": "kko_4364192436",
+                                          "llmModel": "gemini-2.0-flash",
+                                        });
+
+                                    print(response);
+                                    _handleApiResponse(response);
+                                  },
+                                  onTapDown: (_) {
+                                    setState(() {
+                                      _isFirstButtonPressed = true;
+                                    });
+                                  },
+                                  onTapUp: (_) {
+                                    setState(() {
+                                      _isFirstButtonPressed = false;
+                                    });
+                                  },
+                                  onTapCancel: () {
+                                    setState(() {
+                                      _isFirstButtonPressed = false;
+                                    });
+                                  },
+                                  child: AnimatedScale(
+                                    scale: _isFirstButtonPressed ? 0.95 : 1.0,
+                                    duration: Duration(milliseconds: 100),
+                                    child: Container(
+                                      height: 61,
+                                      decoration: ShapeDecoration(
+                                        color: _isFirstButtonPressed
+                                            ? const Color(0xFFF5F5F5)
+                                            : Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            width: 1,
+                                            color: _isFirstButtonPressed
+                                                ? const Color(0xFFEB423D)
+                                                : const Color(0xFF4D4D4D),
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '이야기가 하고 싶어요. \n',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: '대화하면서 안정을 찾아보아요.',
+                                                style: TextStyle(
+                                                  color: const Color(
+                                                    0xFF828282,
+                                                  ),
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: ' ',
+                                                style: TextStyle(
+                                                  color: const Color(
+                                                    0xFF828282,
+                                                  ),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                GestureDetector(
+                                  onTap: () async {
+                                    final response = await ref
+                                        .read(apiProvider.notifier)
+                                        .postAsync('/chat/default', {
+                                          "request": "1",
+                                          "userId": "kko_3006418247",
+                                          "llmModel": "gemini-2.0-flash",
+                                        });
+
+                                    print(response);
+                                    _handleApiResponse(response);
+                                  },
+                                  onTapDown: (_) {
+                                    setState(() {
+                                      _isSecondButtonPressed = true;
+                                    });
+                                  },
+                                  onTapUp: (_) {
+                                    setState(() {
+                                      _isSecondButtonPressed = false;
+                                    });
+                                  },
+                                  onTapCancel: () {
+                                    setState(() {
+                                      _isSecondButtonPressed = false;
+                                    });
+                                  },
+                                  child: AnimatedScale(
+                                    scale: _isSecondButtonPressed ? 0.95 : 1.0,
+                                    duration: Duration(milliseconds: 100),
+                                    child: Container(
+                                      height: 61,
+                                      decoration: ShapeDecoration(
+                                        color: _isSecondButtonPressed
+                                            ? const Color(0xFFF5F5F5)
+                                            : Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            width: 1,
+                                            color: _isSecondButtonPressed
+                                                ? const Color(0xFFEB423D)
+                                                : const Color(0xFF4D4D4D),
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: '생각 전환을 하고 싶어요. \n',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: '마토와 집중해서 퀴즈를 풀어봐요!',
+                                                style: TextStyle(
+                                                  color: const Color(
+                                                    0xFF828282,
+                                                  ),
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              '지금 마음에 가장 가까운 느낌을\n골라볼까요? 마토가 함께할게요!',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            GestureDetector(
-                              onTap: () {
-                                // 여기 누른것처럼
-                              },
-                              onTapDown: (_) {
-                                setState(() {
-                                  _isFirstButtonPressed = true;
-                                });
-                              },
-                              onTapUp: (_) {
-                                setState(() {
-                                  _isFirstButtonPressed = false;
-                                });
-                              },
-                              onTapCancel: () {
-                                setState(() {
-                                  _isFirstButtonPressed = false;
-                                });
-                              },
-                              child: AnimatedScale(
-                                scale: _isFirstButtonPressed ? 0.95 : 1.0,
-                                duration: Duration(milliseconds: 100),
-                                child: Container(
-                                  height: 61,
-                                  decoration: ShapeDecoration(
-                                    color: _isFirstButtonPressed
-                                        ? const Color(0xFFF5F5F5)
-                                        : Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: _isFirstButtonPressed
-                                            ? const Color(0xFFEB423D)
-                                            : const Color(0xFF4D4D4D),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '이야기가 하고 싶어요. \n',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: '대화하면서 안정을 찾아보아요.',
-                                            style: TextStyle(
-                                              color: const Color(0xFF828282),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: ' ',
-                                            style: TextStyle(
-                                              color: const Color(0xFF828282),
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            GestureDetector(
-                              onTap: () {
-                                // 여기 누른것처럼
-                              },
-                              onTapDown: (_) {
-                                setState(() {
-                                  _isSecondButtonPressed = true;
-                                });
-                              },
-                              onTapUp: (_) {
-                                setState(() {
-                                  _isSecondButtonPressed = false;
-                                });
-                              },
-                              onTapCancel: () {
-                                setState(() {
-                                  _isSecondButtonPressed = false;
-                                });
-                              },
-                              child: AnimatedScale(
-                                scale: _isSecondButtonPressed ? 0.95 : 1.0,
-                                duration: Duration(milliseconds: 100),
-                                child: Container(
-                                  height: 61,
-                                  decoration: ShapeDecoration(
-                                    color: _isSecondButtonPressed
-                                        ? const Color(0xFFF5F5F5)
-                                        : Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                        width: 1,
-                                        color: _isSecondButtonPressed
-                                            ? const Color(0xFFEB423D)
-                                            : const Color(0xFF4D4D4D),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: '생각 전환을 하고 싶어요. \n',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: '마토와 집중해서 퀴즈를 풀어봐요!',
-                                            style: TextStyle(
-                                              color: const Color(0xFF828282),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        Positioned(
+                          top: -4,
+                          left: 0,
+                          child: Image.asset(
+                            'assets/icons/mini_tomate.png',
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+
+                    // 채팅 메시지 리스트
+                    SizedBox(height: 20),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) {
+                        final message = _messages[index];
+                        return _buildChatMessage(message);
+                      },
                     ),
                   ],
                 ),
@@ -234,16 +383,13 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             ),
             // 하단 채팅 입력창
             Transform.translate(
-              offset: Offset(
-                0,
-                keyboardHeight > 0 ? 50 : 0,
-              ), // 키보드가 올라오면 위로 이동
+              offset: Offset(0, keyboardHeight > 0 ? 50 : 0),
               child: Container(
                 padding: EdgeInsets.fromLTRB(
                   26,
                   16,
                   26,
-                  keyboardHeight > 0 ? 0 : 48, // 키보드가 올라오면 하단 패딩 줄이기
+                  keyboardHeight > 0 ? 0 : 48,
                 ),
                 child: Row(
                   children: [
@@ -261,6 +407,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                         ),
                         child: TextField(
                           controller: _messageController,
+                          focusNode: _focusNode,
                           decoration: InputDecoration(
                             hintText: '마토랑 의사소통을 해봐요:)',
                             hintStyle: TextStyle(
@@ -274,6 +421,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                             ),
                           ),
                           style: TextStyle(fontSize: 14),
+                          onTap: () {
+                            // 입력창 클릭 시 스크롤을 맨 아래로 이동
+                            _scrollToBottom();
+                          },
+                          onSubmitted: (text) => _sendMessage(text),
                         ),
                       ),
                     ),
@@ -288,14 +440,8 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                       child: Center(
                         child: IconButton(
                           padding: EdgeInsets.zero,
-                          onPressed: () {
-                            // 메시지 전송 로직
-                            if (_messageController.text.trim().isNotEmpty) {
-                              // TODO: 메시지 전송 구현
-                              print('메시지 전송: ${_messageController.text}');
-                              _messageController.clear();
-                            }
-                          },
+                          onPressed: () =>
+                              _sendMessage(_messageController.text),
                           icon: Center(
                             child: Icon(
                               Icons.arrow_upward_outlined,
@@ -314,5 +460,99 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         ),
       ),
     );
+  }
+
+  // 채팅 메시지 위젯 빌더
+  Widget _buildChatMessage(ChatMessage message) {
+    final isUser = message.type == 0;
+
+    if (isUser) {
+      // 사용자 메시지 (기존 방식 유지)
+      return Container(
+        margin: EdgeInsets.only(bottom: 22),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.65,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: const Color(0xFFE0E0E0), width: 1),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      topRight: Radius.circular(18),
+                      bottomLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(4),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  message.memberLogs,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 12),
+          ],
+        ),
+      );
+    } else {
+      // 시스템 메시지 (토마토 아이콘 겹치기)
+      return Container(
+        margin: EdgeInsets.only(bottom: 22),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 15),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.65,
+              ),
+              padding: EdgeInsets.fromLTRB(19, 16, 19, 0),
+              decoration: ShapeDecoration(
+                color: const Color(0xFFFFE8E8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(4),
+                    topRight: Radius.circular(18),
+                    bottomLeft: Radius.circular(18),
+                    bottomRight: Radius.circular(18),
+                  ),
+                ),
+              ),
+              child: Text(
+                message.memberLogs,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Positioned(
+              top: -4,
+              left: 0,
+              child: Image.asset(
+                'assets/icons/mini_tomate.png',
+                width: 30,
+                height: 30,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

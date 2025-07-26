@@ -265,7 +265,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 builder: (context) => NaverWebViewScreen(authUrl: naverAuthUrl),
               ),
             ) ??
-            false;
+                false;
 
         if (success) {
           print('네이버 로그인 성공!');
@@ -274,6 +274,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           print('네이버 로그인 취소 또는 실패');
           _showErrorSnackbar('네이버 로그인이 취소되었습니다.');
         }
+      }else{
+        GoRouter.of(context).goNamed(AppRoutes.home1Screen.name);
       }
     } catch (error) {
       print('소셜 로그인 오류: $error');

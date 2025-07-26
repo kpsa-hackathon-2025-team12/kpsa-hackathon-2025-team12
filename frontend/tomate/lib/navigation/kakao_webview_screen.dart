@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tomate/core/api/api_provider.dart';
 
-class KakaoWebViewScreen extends StatefulWidget {
+class KakaoWebViewScreen extends ConsumerStatefulWidget {
   final String authUrl;
 
   const KakaoWebViewScreen({super.key, required this.authUrl});
 
   @override
-  State<KakaoWebViewScreen> createState() => _KakaoWebViewScreenState();
+  ConsumerState<KakaoWebViewScreen> createState() => _KakaoWebViewScreenState();
 }
 
-class _KakaoWebViewScreenState extends State<KakaoWebViewScreen> {
+class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
   InAppWebViewController? webViewController;
   bool isLoading = true;
 
@@ -59,9 +61,7 @@ class _KakaoWebViewScreenState extends State<KakaoWebViewScreen> {
               });
 
               // 카카오 로그인 페이지가 로드되면 사용자에게 알림
-              if (url.toString().contains('kauth.kakao.com')) {
-
-              }
+              if (url.toString().contains('kauth.kakao.com')) {}
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               final url = navigationAction.request.url.toString();
@@ -77,9 +77,15 @@ class _KakaoWebViewScreenState extends State<KakaoWebViewScreen> {
                   (url.startsWith('https://localhost') &&
                       url.contains('code='))) {
                 print('카카오 로그인 성공 감지: $url');
+                // 카카오 OAuth 콜백 API 호출
+                final response = await ref
+                    .read(apiProvider.notifier)
+                    .getQueryAsync('/oauth2/callback/kakao', {
+                  'code': url,
+                });
 
-                // 1초 후 성공 결과와 함께 화면 닫기
-                Future.delayed(Duration(milliseconds: 1000), () {
+                print(response);
+                    Future.delayed(Duration(milliseconds: 1000), () {
                   if (mounted) {
                     Navigator.of(context).pop(true);
                   }
