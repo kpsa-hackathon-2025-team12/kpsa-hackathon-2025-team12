@@ -7,6 +7,7 @@ import com.hack.kpsahack12.exception.CustomException;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2TokenResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2UserResponse;
 import com.hack.kpsahack12.oauth2.service.auth.KakaoAuthService;
+import com.hack.kpsahack12.oauth2.service.auth.NaverAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +34,31 @@ import java.io.IOException;
 public class OAuth2Controller {
 
     private final KakaoAuthService kakaoAuthService;
+    private final NaverAuthService naverAuthService;
+
+    @GetMapping("/callback/naver")
+    public void callbackNaver(@RequestParam String code, @RequestParam String state, HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        log.info("code : {}, state : {}", code, state);
+
+        OAuth2TokenResponse oAuth2TokenResponse = naverAuthService.getAccessToken(code);
+        log.info("네이버 콜백 인가 함수 호출");
+
+        OAuth2UserResponse userInfo = naverAuthService.getUserInfo(oAuth2TokenResponse.getAccessToken());
+        log.info("user Info : {}", userInfo);
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute("token", "TEST API TOKEN");
+        session.setAttribute("user", "dev_naver"  + userInfo.getId()); // 사용자 식별자도 저장
+
+        log.info("네이버 로그인 성공: 세션 ID = {}", session.getId());
+
+        log.info("네이버 로그인 성공: 세션 token = {}", session.getAttribute("token"));
+        log.info("세션 속성: user = {}", session.getAttribute("user"));
+
+        response.sendRedirect("https://google.com");
+    }
+
 
 
     @Operation(
@@ -90,10 +116,28 @@ public class OAuth2Controller {
             throw new CustomException(ErrorCode.NOT_FOUND_OAUTH_PROVIDER);
         }
     }
-
+    @Operation(
+            summary = "네이버 로그인 Redirect URL 리턴",
+            description = "네이버 로그인 버튼 클릭시 동의 화면 호출 URL",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "네이버 로그인 URL 반환 성공",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ApiResponseV2.class)
+                            )
+                    )
+            }
+    )
     @GetMapping("/login/naver")
     public ApiResponseV2<?> NaverLogin() {
-        log.info("naver login");
-        return ApiResponseV2.success("");
+
+        try{
+            log.info("naver login");
+            return ApiResponseV2.success("");
+        }catch (Exception ex){
+            throw new CustomException(ErrorCode.NOT_FOUND_OAUTH_PROVIDER);
+        }
     }
 }
