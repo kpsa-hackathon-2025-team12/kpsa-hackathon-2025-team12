@@ -14,4 +14,20 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
         this.additionalMessage = null;
     }
+
+    public CustomException(ErrorCode errorCode, String additionalMessage) {
+        super(additionalMessage == null
+                ? errorCode.getMessage()
+                : errorCode.getMessage() + " - " + additionalMessage);
+        this.errorCode = errorCode;
+        this.additionalMessage = additionalMessage;
+    }
+
+    @Override
+    public String getMessage() {
+        if (additionalMessage == null) {
+            return errorCode.getMessage();
+        }
+        return errorCode.getMessage() + " - " + additionalMessage;
+    }
 }
