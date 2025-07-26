@@ -123,6 +123,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF5),
+      drawer: _buildDrawer(),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFFCF5),
         elevation: 0,
@@ -134,6 +135,21 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             color: Colors.black,
           ),
         ),
+        leading: Builder(
+          builder: (context) => IconButton(
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            icon: Icon(Icons.menu_outlined, size: 20),
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 12.0),
+            child: GestureDetector(child: Icon(Icons.add_outlined, size: 22)),
+          ),
+        ],
         centerTitle: true,
       ),
       body: SafeArea(
@@ -554,5 +570,103 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         ),
       );
     }
+  }
+
+  // 사이드 드로어 빌더
+  Widget _buildDrawer() {
+    return Drawer(
+      width: MediaQuery.of(context).size.width / 1.6,
+      backgroundColor: const Color(0xFF1E1E1E),
+      child: Column(
+        children: [
+          // 상단 여백
+          SizedBox(height: 60),
+
+          // 메뉴 항목들
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(Icons.edit_outlined, '새 채팅'),
+                _buildDrawerItem(Icons.search_outlined, '채팅 검색'),
+                _buildDrawerItem(Icons.library_books_outlined, 'AI 모델 변경'),
+
+                SizedBox(height: 20),
+
+                _buildDrawerItem(Icons.chat_outlined, '이야기가 하고 싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '생각 전환을 하고 싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '나의 감정을 컨트롤 하기 힘들어.'),
+                _buildDrawerItem(Icons.chat_outlined, '오늘 많이 힘들었어..'),
+
+                SizedBox(height: 20),
+
+                _buildDrawerItem(Icons.chat_outlined, '난 대표님만 보면 숨이 막혀..'),
+                _buildDrawerItem(Icons.chat_outlined, '열심히 해도 왜 월급은 쥐 꼴만 할까..??'),
+              ],
+            ),
+          ),
+
+          // 하단 계정 정보
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.blue,
+                  child: Text(
+                    'J',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '주승현',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      '2Level',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  // 드로어 메뉴 아이템 빌더
+  Widget _buildDrawerItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white, size: 20),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        // 각 메뉴별 기능 추가 가능
+      },
+      contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 2),
+    );
   }
 }
