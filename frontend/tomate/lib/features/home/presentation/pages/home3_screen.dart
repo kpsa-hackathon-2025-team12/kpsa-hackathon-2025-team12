@@ -129,6 +129,14 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 일기쓰기 기능 구현 예정
+        },
+        backgroundColor: const Color(0xFFFF6B6B),
+        shape: CircleBorder(),
+        child: Icon(Icons.edit, color: Colors.white, size: 22),
+      ),
     );
   }
 
