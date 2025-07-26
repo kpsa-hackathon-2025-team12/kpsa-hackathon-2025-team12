@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -80,6 +81,12 @@ public class UserChatServiceImpl implements UserChatService {
                 });
     }
 
+    @Override
+    @Transactional
+    public void truncate() {
+        memberLlmDataRepository.truncateTable();
+    }
+
     private MemberLlmData saveChatLog(String userId, String message, int type, int buttonType) {
         try {
             // 회원 정보 조회
@@ -117,14 +124,13 @@ public class UserChatServiceImpl implements UserChatService {
         MemberLlmData requestLog = saveChatLog(userChatRequestDto.getUserId(), userChatRequestDto.getRequest(), 0, 1);
 
         LlmChatRequestDto llmChatRequestDto = new LlmChatRequestDto(userChatRequestDto,
-                "너는 아래에 6개의 대답 response1 ~ response6 까지 랜덤으로 대답 할 수 있어. " +
-                        " 대신 response1: ~ response6: 이 단어는 빼고 뒷 문장만," +
-                        "response1: 그래, 딴 생각 해보자! 빨간 과일 다섯 개 떠올릴 수 있어?." +
-                        "response2:지금 이 순간 눈에 보이는 파란색 물건 3개를 찾아봐!," +
-                        "response3:좋아! 그럼 머릿속으로 날개달린 바나나를 상상해볼래?," +
-                        "response4:손끝으로 지금 만지고 있는 물건의 재질을 설명해볼래?," +
-                        "response5:지금 들리는 소리 3가지를 조용히 들어볼까?," +
-                        "response6:조금 어렵겠지만... 13의 배수 3개만 말해볼래?, ");
+                "너는 아래에 6개의 대답 중 하나만 랜덤으로 할 수 있어. " +
+                        " 그래, 딴 생각 해보자! 빨간 과일 다섯 개 떠올릴 수 있어?." +
+                        "지금 이 순간 눈에 보이는 파란색 물건 3개를 찾아봐!," +
+                        "좋아! 그럼 머릿속으로 날개달린 바나나를 상상해볼래?," +
+                        "손끝으로 지금 만지고 있는 물건의 재질을 설명해볼래?," +
+                        "지금 들리는 소리 3가지를 조용히 들어볼까?," +
+                        "조금 어렵겠지만... 13의 배수 3개만 말해볼래?, ");
 
         // 2. LLM에 요청 전송 및 응답 받기
         return geminiWebClientService.getChatCompletion(llmChatRequestDto)

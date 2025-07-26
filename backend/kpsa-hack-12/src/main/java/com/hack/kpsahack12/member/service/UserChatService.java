@@ -10,4 +10,6 @@ import java.util.Map;
 public interface UserChatService {
     Mono<ResponseEntity<Map<String, Object>>> getchattingOneComment(UserChatRequestDto userChatRequestDto);
     Mono<ResponseEntity<Map<String, Object>>> getchattingdefault(UserChatRequestDto userChatRequestDto);
+
+    void truncate();
 }
