@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -17,13 +19,13 @@ public class dataInfoService {
     private final LocationSpotRepository locationSpotRepository;
 
 
-    public LocationSpot getLocationSpot(){
+    public List<LocationSpot> getLocationSpot(){
         log.info("get location spot");
-        return locationSpotRepository.findAll().get(0);
+        return locationSpotRepository.findAll();
     }
 
-    public Symptoms getSymptoms(){
+    public List<Symptoms> getSymptoms(){
         log.info("get symptoms");
-        return symptomsRepository.findAll().get(0);
+        return symptomsRepository.findAll();
     }
 }
