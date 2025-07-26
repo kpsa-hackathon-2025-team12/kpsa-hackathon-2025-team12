@@ -1,6 +1,7 @@
 package com.hack.kpsahack12.oauth2.controller;
 
 
+import com.hack.kpsahack12.common.ApiResponseV2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,14 +17,14 @@ import java.io.IOException;
 public class OAuth2Controller {
 
     @GetMapping("/login/kakao")
-    public String kakaoLogin() throws IOException {
+    public ApiResponseV2<?> kakaoLogin() throws IOException {
         log.info("kakao login");
-        return "";
+        return ApiResponseV2.success("");
     }
 
     @GetMapping("/login/naver")
-    public String NaverLogin() throws IOException {
+    public ApiResponseV2<?> NaverLogin() throws IOException {
         log.info("naver login");
-        return "";
+        return ApiResponseV2.success("");
     }
 }
