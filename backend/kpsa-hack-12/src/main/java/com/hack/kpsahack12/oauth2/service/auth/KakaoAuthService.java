@@ -39,14 +39,25 @@ public class KakaoAuthService implements OAuthServiceInterface {
 
     @Override
     public String getProviderName() {
-
-        return "";
+        return Oauth2.KAKAO_OAUTH.getProvider();
     }
 
     @Override
     public String getPermissionCodeUrl() {
 
-        return "";
+        String clientId = oAuthInfo.getClientId();
+        String redirectUri = oAuthInfo.getRedirectUri(); // 콜백 URL
+
+        log.debug("clientId : {}, redirectUri : {}", clientId, redirectUri);
+
+        String kakaoAuthUrl = oAuthInfo.getAuthUrl().getPermissionCode() +
+                "?client_id=" + clientId +
+                "&redirect_uri=" + redirectUri +
+                "&response_type=code";
+
+        log.debug("kakaoAuthUrl : {}", kakaoAuthUrl);
+
+        return kakaoAuthUrl;
     }
 
     @Override
