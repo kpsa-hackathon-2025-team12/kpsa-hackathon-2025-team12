@@ -19,7 +19,8 @@ public class UserController {
     private final MemberService memberService;
 
     @PutMapping("/set/nicname")
-    public void setNicname(@RequestParam String nicname) {
+    public void setNicname(@RequestParam(name = "nickname", required = true) String nicname,
+                           @RequestParam(name = "userId", required = true) String userId) {
         try {
             log.info("====== setNicname ======");
         }catch (Exception e) {

@@ -1,7 +1,10 @@
 package com.hack.kpsahack12.model.entity.member;
 
+import com.hack.kpsahack12.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Map;
 
 @Entity
 @Getter
@@ -16,7 +19,7 @@ public class Members {
     private Long idx;
 
     @Column(nullable = false, unique = true)
-    private Long id;
+    private String id;
 
     private String email;
 
@@ -36,4 +39,16 @@ public class Members {
 
     @Column(nullable = false)
     private Long responseCnt;
+
+
+
+    public static Members create(Map<String,Object> req) {
+        return Members.builder()
+                .id(req.get("userId").toString())
+                .email(req.get("email").toString())
+                .name(req.get("name").toString())
+                .status(Status.REGISTER.getCode())
+                .visited(1L)
+                .build();
+    }
 }

@@ -4,6 +4,7 @@ package com.hack.kpsahack12.oauth2.controller;
 import com.hack.kpsahack12.common.ApiResponseV2;
 import com.hack.kpsahack12.enums.ErrorCode;
 import com.hack.kpsahack12.exception.CustomException;
+import com.hack.kpsahack12.member.service.MemberService;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2TokenResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2UserResponse;
 import com.hack.kpsahack12.oauth2.service.auth.KakaoAuthService;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/oauth2")
@@ -35,6 +38,7 @@ public class OAuth2Controller {
 
     private final KakaoAuthService kakaoAuthService;
     private final NaverAuthService naverAuthService;
+    private final MemberService memberService;
 
     @GetMapping("/callback/naver")
     public void callbackNaver(@RequestParam String code, @RequestParam String state, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -47,16 +51,26 @@ public class OAuth2Controller {
         OAuth2UserResponse userInfo = naverAuthService.getUserInfo(oAuth2TokenResponse.getAccessToken());
         log.info("user Info : {}", userInfo);
 
-        HttpSession session = request.getSession(true);
-        session.setAttribute("token", "TEST API TOKEN");
-        session.setAttribute("user", "dev_naver"  + userInfo.getId()); // 사용자 식별자도 저장
+        Map<String,Object> req = new HashMap<>();
+        req.put("userId", "naver_" + userInfo.getId());
+        req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
+        req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
 
-        log.info("네이버 로그인 성공: 세션 ID = {}", session.getId());
+        boolean visited = memberService.visitedMember(userInfo.getId());
 
-        log.info("네이버 로그인 성공: 세션 token = {}", session.getAttribute("token"));
-        log.info("세션 속성: user = {}", session.getAttribute("user"));
+        if(visited){ // true 면 이미 로그인 했던 적 상태면
+            response.sendRedirect("https://naver.com");
+        }
 
-        response.sendRedirect("https://google.com");
+        int result = memberService.saveRegisterMember(req);
+
+        if(result == 1) {
+            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
+        }else{
+            throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
+        }
+
+        response.sendRedirect("https://google.com?userId=" + userInfo.getId());
     }
 
 
@@ -78,17 +92,25 @@ public class OAuth2Controller {
         log.info("user Info : {}", userInfo);
 
         // TODO DB 저장 userID
-//        HttpSession session = request.getSession(true);
-//        session.setAttribute("token", "TEST API TOKEN");
-//        session.setAttribute("user", "dev_kakao"  + userInfo.getId()); // 사용자 식별자도 저장
-//
-//        log.info("카카오 로그인 성공: 세션 ID = {}", session.getId());
-//
-//        log.info("카카오 로그인 성공: 세션 token = {}", session.getAttribute("token"));
-//        log.info("세션 속성: user = {}", session.getAttribute("user"));
 
-        response.sendRedirect("https://naver.com");
+        Map<String,Object> req = new HashMap<>();
+        req.put("userId", "kko_" + userInfo.getId());
+        req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
+        req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
 
+        boolean visited = memberService.visitedMember(userInfo.getId());
+
+        if(visited){ // true 면 이미 로그인 했던 적 상태면
+            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
+        }
+
+        int result = memberService.saveRegisterMember(req);
+
+        if(result == 1) {
+            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
+        }else{
+            throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
+        }
     }
 
 
