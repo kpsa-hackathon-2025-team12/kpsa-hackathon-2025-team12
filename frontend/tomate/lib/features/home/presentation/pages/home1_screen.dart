@@ -17,6 +17,9 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
   late AnimationController _animationController;
   late AnimationController _bounceAnimationController;
   late Animation<double> _bounceAnimation;
+  late AnimationController _walkAnimationController;
+  late Animation<double> _walkHorizontalAnimation;
+  late Animation<double> _walkVerticalAnimation;
   int _currentPage = 0;
 
   // 각 카드별 진행 상태 관리 (0: 지하철역, 1: 산책, 2: 공원벤치)
@@ -31,7 +34,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       vsync: this,
     );
 
-    // 토마토 통통 뛰는 애니메이션 컨트롤러
+    // 토마토 통통 뛰는 애니메이션 컨트롤러 (첫 번째 카드용)
     _bounceAnimationController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -44,8 +47,35 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       ),
     );
 
+    // 걷기 애니메이션 컨트롤러 (두 번째 카드용)
+    _walkAnimationController = AnimationController(
+      duration: const Duration(seconds: 4), // 4초 주기로 왕복
+      vsync: this,
+    );
+
+    // 수평 이동 애니메이션 (0에서 200까지 갔다가 다시 0으로)
+    _walkHorizontalAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: 200.0, // 200픽셀 오른쪽으로 이동
+        ).animate(
+          CurvedAnimation(
+            parent: _walkAnimationController,
+            curve: Curves.easeInOut,
+          ),
+        );
+
+    // 수직 바운스 애니메이션 (걷는 동안 통통통)
+    _walkVerticalAnimation = Tween<double>(begin: 0.0, end: -15.0).animate(
+      CurvedAnimation(
+        parent: _walkAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     // 애니메이션 반복 시작
     _bounceAnimationController.repeat(reverse: true);
+    _walkAnimationController.repeat(reverse: true);
   }
 
   @override
@@ -53,6 +83,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     _pageController.dispose();
     _animationController.dispose();
     _bounceAnimationController.dispose();
+    _walkAnimationController.dispose();
     super.dispose();
   }
 
@@ -124,7 +155,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             builder: (context, child) {
               return Positioned(
                 right: 0,
-                bottom: 30 + _bounceAnimation.value,
+                bottom: 0 + _bounceAnimation.value,
                 child: Image.asset(
                   'assets/icons/last_tomato.png',
                   width: 57,
@@ -140,12 +171,42 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
 
   /// 2번째 카드: 산책 애니메이션 위젯
   Widget _buildWalkAnimation(bool isActive) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F4FD),
-        borderRadius: BorderRadius.circular(16),
+      child: Stack(
+        children: [
+          // 역/정거장 이미지 (정적)
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset(
+              'assets/icons/station.png', // station PNG 이미지
+              width: 117.w,
+              height: 100.h,
+            ),
+          ),
+          // 토마토 캐릭터 (걷기 애니메이션)
+          AnimatedBuilder(
+            animation: _walkAnimationController,
+            builder: (context, child) {
+              return Positioned(
+                left: _walkHorizontalAnimation.value,
+                bottom:
+                    10 +
+                    (_walkVerticalAnimation.value *
+                        (1 -
+                            (_walkHorizontalAnimation.value / 200)
+                                .abs())), // 멈춰있을 때는 바운스 없음
+                child: Image.asset(
+                  'assets/icons/right_tomate.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -367,9 +428,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
               const SizedBox(height: 20),
 
               // 일러스트 영역
-              Expanded(
-                child: _getAnimationWidget(index, isActive),
-              ),
+              Expanded(child: _getAnimationWidget(index, isActive)),
               const SizedBox(height: 20),
 
               // 버튼 영역 (조건에 따라 다른 버튼 표시)
