@@ -458,6 +458,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "이 앱은 심박수 데이터를 읽어와 건강 상태를 모니터링하고 기록을 관리합니다.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "이 앱은 측정한 심박수 데이터를 건강 앱에 저장하여 건강 기록을 업데이트합니다.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -489,6 +491,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "이 앱은 심박수 데이터를 읽어와 건강 상태를 모니터링하고 기록을 관리합니다.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "이 앱은 측정한 심박수 데이터를 건강 앱에 저장하여 건강 기록을 업데이트합니다.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
