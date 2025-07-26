@@ -18,8 +18,23 @@ public class dialy {
 
     private String memberId;
 
+    private int complite_cnt;
+
+    private String before_score;
+
+    private String after_score;
+
     private String dialyText;
 
     private String createdAt;
 
+
+    public static dialy create(String memberId, String before_score, String after_score) {
+        return dialy.builder()
+                .memberId(memberId)
+                .complite_cnt(0)
+                .before_score(before_score)
+                .after_score(after_score)
+                .build();
+    }
 }

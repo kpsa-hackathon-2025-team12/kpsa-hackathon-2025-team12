@@ -6,9 +6,11 @@ import com.hack.kpsahack12.exception.CustomException;
 import com.hack.kpsahack12.model.dto.LevelDto;
 import com.hack.kpsahack12.model.entity.member.MemberLevel;
 import com.hack.kpsahack12.model.entity.member.Members;
+import com.hack.kpsahack12.model.entity.member.dialy;
 import com.hack.kpsahack12.model.repository.LevelInfoRepository;
 import com.hack.kpsahack12.model.repository.MemberLevelRepository;
 import com.hack.kpsahack12.model.repository.MembersRepository;
+import com.hack.kpsahack12.model.repository.dialyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,12 +27,17 @@ public class LevelService {
     private final MemberLevelRepository memberLevelRepository;
     private final MembersRepository membersRepository;
 
+    private final dialyRepository dialyRepository;
+
     public MemberLevel saveLevelInfo(LevelDto levelDto) {
         log.info("levelDto : {}", levelDto);
 
         String userId = levelDto.getUserId();
         String level = "";
         Optional<Members> members = membersRepository.findById(userId);
+
+        String beforeScore = "0";
+        String afterScore = "0";
 
         if (!members.isPresent()) {
             throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
@@ -57,10 +64,16 @@ public class LevelService {
 
         if (existingRecord.isPresent()) {
             // 기존 기록이 있으면 업데이트
+            beforeScore = existingRecord.get().getTotalScore();
+
             memberLevel = existingRecord.get();
             memberLevel.setLevel(level);
             memberLevel.setChoiceSpace(levelDto.getChoiceSpace());
             memberLevel.setTotalScore(String.valueOf(levelDto.getTotalScore()));
+
+
+            afterScore = String.valueOf(levelDto.getTotalScore());
+
         } else {
             // 기존 기록이 없으면 새로 생성
             memberLevel = MemberLevel.create(
@@ -70,7 +83,13 @@ public class LevelService {
                     String.valueOf(levelDto.getTotalScore()),
                     today
             );
+            beforeScore = "0";
+            afterScore = String.valueOf(levelDto.getTotalScore());
         }
+
+        dialy dialyData = dialy.create(members.get().getId(), beforeScore, afterScore);
+
+        dialyRepository.save(dialyData);
 
         return memberLevelRepository.save(memberLevel);
     }
