@@ -14,8 +14,9 @@ public class UserChatServiceImpl implements UserChatService {
 
     private final GeminiWebClientService geminiWebClientService;
 
+    // Default
     @Override
-    public Mono<UserChatResponseDto> getchattingOneComment(UserChatRequestDto userChatRequestDto) {
+    public Mono<UserChatResponseDto> getchattingdefault(UserChatRequestDto userChatRequestDto) {
         LlmChatRequestDto llmChatRequestDto = new LlmChatRequestDto(userChatRequestDto,
                 "공황발작 실전 대응’에 특화된 감정 지원 챗봇이야." +
                 " 사용자가 심한 불안이나 공황 증상을 호소할 경우, 감성적 위로보다 객관적 생리 지식과 실전 대처법 중심으로 짧고 정확하게 안내해줘." +
@@ -27,5 +28,14 @@ public class UserChatServiceImpl implements UserChatService {
         Mono<LlmChatResponseDto> chatCompletionMono = geminiWebClientService.getChatCompletion(llmChatRequestDto);
         return chatCompletionMono.map(UserChatResponseDto::new);
     }
+
+    @Override
+    public Mono<UserChatResponseDto> getchattingOneComment(UserChatRequestDto userChatRequestDto) {
+        LlmChatRequestDto llmChatRequestDto = new LlmChatRequestDto(userChatRequestDto,
+                "너가 대답 할 수 있는건 두개야 YES OR NO");
+        Mono<LlmChatResponseDto> chatCompletionMono = geminiWebClientService.getChatCompletion(llmChatRequestDto);
+        return chatCompletionMono.map(UserChatResponseDto::new);
+    }
+
 
 }

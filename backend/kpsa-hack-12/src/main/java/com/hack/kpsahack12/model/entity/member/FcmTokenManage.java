@@ -12,12 +12,16 @@ import lombok.*;
 @Table(name = "fcm_token_manage")
 public class FcmTokenManage {
     @Id
-    @Column(nullable = false)
-    private Long memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idx;
+
+    @Column(name = "member_id", insertable = false, updatable = false)
+    private String memberId;
 
     private String token;
 
     @OneToOne
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Members member;
+
 }

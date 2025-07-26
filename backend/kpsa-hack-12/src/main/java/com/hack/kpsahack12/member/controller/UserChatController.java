@@ -25,6 +25,11 @@ public class UserChatController {
             description = "프롬프트 현재 - 존댓말 하지 않고 대답 잘하기 -. llmModel 은 NULL able"
     )
 
+    @PostMapping("/default")
+    public Mono<UserChatResponseDto> getchattingdefault(@RequestBody UserChatRequestDto userChatRequestDto) {
+        return userChatService.getchattingdefault(userChatRequestDto);
+    }
+
     @PostMapping("/prompt")
     public Mono<UserChatResponseDto> chattingOneComment(@RequestBody UserChatRequestDto userChatRequestDto) {
         return userChatService.getchattingOneComment(userChatRequestDto);

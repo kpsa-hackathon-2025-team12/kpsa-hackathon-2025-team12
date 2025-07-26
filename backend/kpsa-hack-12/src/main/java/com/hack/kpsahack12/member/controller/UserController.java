@@ -20,7 +20,7 @@ public class UserController {
 
     private final MemberService memberService;
 
-    @PutMapping("/set/nicname")
+    @PutMapping("/set/nickname")
     public ApiResponseV2<?> setNicname(@RequestParam(name = "nickname", required = true) String nickname,
                                     @RequestParam(name = "userId", required = true) String userId) {
         try {

@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface UserChatService {
     Mono<UserChatResponseDto> getchattingOneComment(UserChatRequestDto userChatRequestDto);
+    Mono<UserChatResponseDto> getchattingdefault(UserChatRequestDto userChatRequestDto);
 }
