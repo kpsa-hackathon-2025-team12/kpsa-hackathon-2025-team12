@@ -1,11 +1,13 @@
 package com.hack.kpsahack12.oauth2.service.auth;
 
 import com.hack.kpsahack12.common.CallClient;
+import com.hack.kpsahack12.common.JsonUtil;
 import com.hack.kpsahack12.config.OAUth2.OAuth2Config;
 import com.hack.kpsahack12.config.OAUth2.OAuth2ProviderValues;
 import com.hack.kpsahack12.enums.ErrorCode;
 import com.hack.kpsahack12.enums.Oauth2;
 import com.hack.kpsahack12.exception.CustomException;
+import com.hack.kpsahack12.model.kakao.KaKaoTokenResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2TokenResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2UserResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuthServiceInterface;
@@ -91,8 +93,18 @@ public class KakaoAuthService implements OAuthServiceInterface {
         // "refresh_token_expires_in":5183999
         // }
 
+        KaKaoTokenResponse response = JsonUtil.getInstance().decodeFromJson(jsonString, KaKaoTokenResponse.class);
 
-        return null;
+        Map<String, String> TokenInfoHeaders = Map.of("Authorization", "Bearer " + response.getAccessToken());
+
+        String TokenInfoString = callClient.GET(oAuthInfo.getAuthUrl().getAccessTokenInfo(),TokenInfoHeaders);
+
+        Map<String,Object> tokenInfo = JsonUtil.getInstance().decodeFromJson(TokenInfoString, Map.class);
+        // {expiresInMillis=21599871, id=4310655717, expires_in=21599, app_id=1265605, appId=1265605}
+        log.debug("tokenInfo : {}", tokenInfo);
+
+        return response;
+
     }
 
     @Override
