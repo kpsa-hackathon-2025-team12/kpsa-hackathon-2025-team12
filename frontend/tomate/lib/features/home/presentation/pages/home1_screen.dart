@@ -24,14 +24,32 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
   late AnimationController _walkAnimationController;
   late Animation<double> _walkHorizontalAnimation;
   late Animation<double> _walkVerticalAnimation;
+
+  // 1레벨용 걷기 애니메이션 컨트롤러들 (3개 카드)
+  late AnimationController _level1WalkController1;
+  late Animation<double> _level1WalkHorizontal1;
+  late Animation<double> _level1WalkVertical1;
+
+  late AnimationController _level1WalkController2;
+  late Animation<double> _level1WalkHorizontal2;
+  late Animation<double> _level1WalkVertical2;
+
+  late AnimationController _level1WalkController3;
+  late Animation<double> _level1WalkHorizontal3;
+  late Animation<double> _level1WalkVertical3;
+
   int _currentPage = 0;
 
   // 각 카드별 진행 상태 관리 (0: 지하철역, 1: 산책, 2: 공원벤치)
   List<bool> _cardInProgress = [false, false, false];
 
+  // 현재 레벨 상태 관리 (내부에서 변경 가능)
+  late int _currentLevel;
+
   @override
   void initState() {
     super.initState();
+    _currentLevel = widget.level; // 초기 레벨 설정
     _pageController = PageController(viewportFraction: 0.80);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -44,7 +62,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       vsync: this,
     );
 
-    _bounceAnimation = Tween<double>(begin: 0.0, end: -20.0).animate(
+    _bounceAnimation = Tween<double>(begin: 0.0, end: -10.0).animate(
       CurvedAnimation(
         parent: _bounceAnimationController,
         curve: Curves.elasticOut,
@@ -77,9 +95,48 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       ),
     );
 
+    // 1레벨용 걷기 애니메이션 컨트롤러들 초기화
+    _level1WalkController1 = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    );
+    _level1WalkHorizontal1 = Tween<double>(begin: 0.0, end: 180.0).animate(
+      CurvedAnimation(parent: _level1WalkController1, curve: Curves.easeInOut),
+    );
+    _level1WalkVertical1 = Tween<double>(begin: 0.0, end: -12.0).animate(
+      CurvedAnimation(parent: _level1WalkController1, curve: Curves.easeInOut),
+    );
+
+    _level1WalkController2 = AnimationController(
+      duration: const Duration(milliseconds: 3500),
+      vsync: this,
+    );
+    _level1WalkHorizontal2 = Tween<double>(begin: 0.0, end: 160.0).animate(
+      CurvedAnimation(parent: _level1WalkController2, curve: Curves.easeInOut),
+    );
+    _level1WalkVertical2 = Tween<double>(begin: 0.0, end: -15.0).animate(
+      CurvedAnimation(parent: _level1WalkController2, curve: Curves.easeInOut),
+    );
+
+    _level1WalkController3 = AnimationController(
+      duration: const Duration(milliseconds: 4500),
+      vsync: this,
+    );
+    _level1WalkHorizontal3 = Tween<double>(begin: 0.0, end: 140.0).animate(
+      CurvedAnimation(parent: _level1WalkController3, curve: Curves.easeInOut),
+    );
+    _level1WalkVertical3 = Tween<double>(begin: 0.0, end: -10.0).animate(
+      CurvedAnimation(parent: _level1WalkController3, curve: Curves.easeInOut),
+    );
+
     // 애니메이션 반복 시작
     _bounceAnimationController.repeat(reverse: true);
     _walkAnimationController.repeat(reverse: true);
+
+    // 1레벨용 애니메이션들도 반복 시작
+    _level1WalkController1.repeat(reverse: true);
+    _level1WalkController2.repeat(reverse: true);
+    _level1WalkController3.repeat(reverse: true);
   }
 
   @override
@@ -88,6 +145,12 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     _animationController.dispose();
     _bounceAnimationController.dispose();
     _walkAnimationController.dispose();
+
+    // 1레벨용 애니메이션 컨트롤러들 해제
+    _level1WalkController1.dispose();
+    _level1WalkController2.dispose();
+    _level1WalkController3.dispose();
+
     super.dispose();
   }
 
@@ -254,8 +317,25 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     );
   }
 
-  /// 카드 index에 따라 적절한 애니메이션 위젯을 반환하는 헬퍼 메소드
+  /// 카드 index와 level에 따라 적절한 애니메이션 위젯을 반환하는 헬퍼 메소드
   Widget _getAnimationWidget(int index, bool isActive) {
+    // 1레벨일 때는 모든 카드에 걷기 애니메이션 적용
+    if (_currentLevel == 1) {
+      switch (index) {
+        case 0:
+          return _buildLevel1WalkAnimation1(isActive); // 1레벨 첫 번째 카드 (대형마트)
+        case 1:
+          return _buildBounceAnimation(
+            isActive,
+          ); // 1레벨 두 번째 카드 (산책 - 제자리 통통 튀기)
+        case 2:
+          return _buildLevel1WalkAnimation3(isActive); // 1레벨 세 번째 카드 (엘레베이터)
+        default:
+          return _buildLevel1WalkAnimation1(isActive);
+      }
+    }
+
+    // 2레벨일 때는 기존 애니메이션 적용
     switch (index) {
       case 0:
         return _buildStairAnimation(isActive); // 지하철역 계단
@@ -369,7 +449,6 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     setState(() {
       _cardInProgress[index] = false;
     });
-    // TODO: 성공 처리 로직 추가 (예: 포인트 증가, 성공 애니메이션 등)
   }
 
   Widget _buildCourageCard(
@@ -562,7 +641,6 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
 
                   // 단계별 카드 데이터 정의
                   final level1Cards = [
-                    // TODO: 1단계용 카드들 - 아래 내용을 원하는 대로 수정하세요
                     {
                       'subtitle': '근처 대형마트에 들어가서\n1분만 걸어다녀볼까요?',
                       'boldText': '1분만 걸어다녀볼까요?',
@@ -600,7 +678,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
                   ];
 
                   // level 파라미터에 따라 적절한 카드 선택
-                  final cards = widget.level == 1 ? level1Cards : level2Cards;
+                  final cards = _currentLevel == 1 ? level1Cards : level2Cards;
 
                   final card = cards[index];
                   return _buildCourageCard(
@@ -644,6 +722,153 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             const SizedBox(height: 30),
           ],
         ),
+      ),
+    );
+  }
+
+  /// 1레벨 첫 번째 카드: 대형마트 걷기 애니메이션
+  Widget _buildLevel1WalkAnimation1(bool isActive) {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset('assets/icons/mart.png', width: 104, height: 94),
+          ),
+          // 토마토 캐릭터 (걷기 애니메이션)
+          AnimatedBuilder(
+            animation: _level1WalkController1,
+            builder: (context, child) {
+              return Positioned(
+                left: Platform.isAndroid
+                    ? _level1WalkHorizontal1.value
+                    : _level1WalkHorizontal1.value + 46,
+                bottom:
+                    10 +
+                    (_level1WalkVertical1.value *
+                        (1 - (_level1WalkHorizontal1.value / 180).abs())),
+                child: Image.asset(
+                  'assets/icons/left_tomato.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 1레벨 두 번째 카드: 산책 걷기 애니메이션
+  Widget _buildLevel1WalkAnimation2(bool isActive) {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset('assets/icons/walk.png', width: 128, height: 94),
+          ),
+          // 토마토 캐릭터 (걷기 애니메이션)
+          AnimatedBuilder(
+            animation: _level1WalkController2,
+            builder: (context, child) {
+              return Positioned(
+                left: Platform.isAndroid
+                    ? _level1WalkHorizontal2.value
+                    : _level1WalkHorizontal2.value + 30,
+                bottom:
+                    10 +
+                    (_level1WalkVertical2.value *
+                        (1 - (_level1WalkHorizontal2.value / 160).abs())),
+                child: Image.asset(
+                  'assets/icons/right_tomate.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 1레벨 세 번째 카드: 엘레베이터 통통 튀는 애니메이션
+  Widget _buildLevel1WalkAnimation3(bool isActive) {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          Positioned(
+            left: Platform.isAndroid ? 20 : 40,
+            bottom: 0,
+            child: Image.asset(
+              'assets/icons/elevator.png',
+              width: 102,
+              height: 127,
+            ),
+          ),
+          // 토마토 캐릭터 (제자리 통통 튀는 애니메이션)
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Positioned(
+                right: Platform.isAndroid ? 28 : 20,
+                bottom: 20 + _bounceAnimation.value, // 제자리에서 위아래로 튀기
+                child: Image.asset(
+                  'assets/icons/right_tomate.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 레벨 1 두 번째 카드: 산책 제자리 통통 튀는 애니메이션
+  Widget _buildBounceAnimation(bool isActive) {
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // 산책로/정거장 이미지 (정적)
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset(
+              'assets/icons/walk.png', // 산책로/정거장 이미지
+              width: 104,
+              height: 94,
+            ),
+          ),
+          // 토마토 캐릭터 (제자리 통통 튀는 애니메이션)
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Positioned(
+                right: Platform.isAndroid ? 30 : 40,
+                bottom: 20 + _bounceAnimation.value, // 제자리에서 위아래로 튀기
+                child: Image.asset(
+                  'assets/icons/right_tomate.png', // 산책하는 토마토
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
