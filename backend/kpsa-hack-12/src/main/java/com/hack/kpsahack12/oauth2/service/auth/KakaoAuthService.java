@@ -8,6 +8,8 @@ import com.hack.kpsahack12.enums.ErrorCode;
 import com.hack.kpsahack12.enums.Oauth2;
 import com.hack.kpsahack12.exception.CustomException;
 import com.hack.kpsahack12.model.kakao.KaKaoTokenResponse;
+import com.hack.kpsahack12.model.kakao.KaKaoUserResponse;
+import com.hack.kpsahack12.model.kakao.KakaoPropertyKey;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2TokenResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuth2UserResponse;
 import com.hack.kpsahack12.oauth2.Interface.OAuht2.OAuthServiceInterface;
@@ -110,6 +112,43 @@ public class KakaoAuthService implements OAuthServiceInterface {
     @Override
     public OAuth2UserResponse getUserInfo(String accessToken) {
 
-        return null;
+        Map<String, String> headers = Map.of("Authorization", "Bearer " + accessToken,
+                "Content-Type", "application/x-www-form-urlencoded");
+
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+        formData.add("secure_resource", true);
+
+        String jsonArray = KakaoPropertyKey.toJsonArrayString(
+                KakaoPropertyKey.PROFILE,
+                KakaoPropertyKey.NAME,
+                KakaoPropertyKey.EMAIL
+        );
+
+        formData.add("property_keys", jsonArray);
+
+
+        String jsonString = callClient.POST(oAuthInfo.getApiUrl().getUserInfo(), headers, formData);
+        log.info("jsonString : {}", jsonString);
+
+        //{
+        //  "id":4310655717,
+        //  "connected_at":"2025-06-18T06:38:16Z",
+        //  "kakao_account":{
+        //    "profile_nickname_needs_agreement":false,
+        //    "profile_image_needs_agreement":true,
+        //    "profile":{
+        //      "nickname":"이대호",
+        //      "is_default_nickname":false
+        //    }
+        //  }
+        //}
+        // TODO DB 저장 로직 생각
+        // KKO_ + id  > pk
+
+        KaKaoUserResponse response = JsonUtil.getInstance().decodeFromJson(jsonString, KaKaoUserResponse.class);
+
+        log.debug("response : {}", response);
+
+        return response;
     }
 }
