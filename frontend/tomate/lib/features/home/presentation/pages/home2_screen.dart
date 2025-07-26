@@ -95,7 +95,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         response.data['data'] != null) {
       List<ChatMessage> newMessages = [];
       for (var messageData in response.data['data']) {
-        newMessages.add(ChatMessage.fromJson(messageData));
+        ChatMessage message = ChatMessage.fromJson(messageData);
+        // 빈 문자열이 아닌 메시지만 추가
+        if (message.memberLogs.trim().isNotEmpty) {
+          newMessages.add(message);
+        }
       }
       _addMessages(newMessages);
     }
@@ -108,7 +112,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
     // 사용자 메시지를 먼저 추가
     _addMessages([
       ChatMessage(
-        memberLogs: message,
+        memberLogs: message.trim(),
         buttonType: 0,
         idx: DateTime.now().millisecondsSinceEpoch,
         type: 0, // 사용자 메시지
@@ -119,14 +123,13 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
 
     try {
       // API 호출 (실제 API 엔드포인트에 맞게 수정 필요)
-      final response = await ref.read(apiProvider.notifier).postAsync(
-        '/chat/message',
-        {
-          "message": message,
-          "userId": "kko_3006418247",
-          "llmModel": "gemini-2.0-flash",
-        },
-      );
+      final response = await ref
+          .read(apiProvider.notifier)
+          .postAsync('/chat/message', {
+            "message": message.trim(),
+            "userId": "kko_4364192436",
+            "llmModel": "gemini-2.0-flash",
+          });
 
       _handleApiResponse(response);
     } catch (e) {
@@ -312,8 +315,8 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                                   onTap: () async {
                                     final response = await ref
                                         .read(apiProvider.notifier)
-                                        .postAsync('/chat/default', {
-                                          "request": "",
+                                        .postAsync('/chat/prompt', {
+                                          "request": "1",
                                           "userId": "kko_4364192436",
                                           "llmModel": "gemini-2.0-flash",
                                         });
@@ -720,18 +723,35 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   // 퀴즈 버튼 빌더
   Widget _buildQuizButton(String text) {
     return GestureDetector(
-      onTap: () {
-        // 버튼 클릭 시 퀴즈 버튼 숨기기
-        setState(() {
-          _showQuizButtons = false;
-        });
-        // 추가 기능 구현 가능
+      onTap: () async {
+        if (text == '한 번 더') {
+          // "한 번 더" 클릭 시 생각 전환과 동일한 로직
+          final response = await ref.read(apiProvider.notifier).postAsync(
+            '/chat/prompt',
+            {
+              "request": "1",
+              "userId": "kko_4364192436",
+              "llmModel": "gemini-2.0-flash",
+            },
+          );
+
+          print(response);
+          _handleApiResponse(response);
+          setState(() {
+            _showQuizButtons = true; // 퀴즈 버튼 표시
+          });
+        } else {
+          // "이제 그만" 클릭 시 퀴즈 버튼 숨기기
+          setState(() {
+            _showQuizButtons = false;
+          });
+        }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: const Color(0xFF4D4D4D), width: 1),
+          border: Border.all(color: const Color(0xFF4E4E4E), width: 1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -739,7 +759,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
           style: TextStyle(
             color: Colors.black,
             fontSize: 12,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
