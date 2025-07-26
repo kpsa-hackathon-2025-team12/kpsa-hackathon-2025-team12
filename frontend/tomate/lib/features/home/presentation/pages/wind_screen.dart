@@ -38,7 +38,7 @@ class _WindScreenState extends State<WindScreen> {
                   // 호흡 애니메이션 GIF
                   SizedBox(
                     width: Platform.isAndroid ? double.infinity : double.infinity,
-                    height: Platform.isAndroid ? 400 : 300,
+                    height: Platform.isAndroid ? 400 : 380,
                     child: Image.asset(
                       'assets/animations/breathe.gif',
                       key: UniqueKey(), // 다른 탭으로 갔다가 돌아올 때마다 gif가 처음부터 재생
