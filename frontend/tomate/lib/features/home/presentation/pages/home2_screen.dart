@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tomate/core/api/api_provider.dart';
@@ -41,6 +43,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   final FocusNode _focusNode = FocusNode();
   List<ChatMessage> _messages = [];
   bool _showQuizButtons = false; // 퀴즈 버튼 표시 여부
+  bool _isSending = false; // 메시지 전송 중 플래그
 
   @override
   void dispose() {
@@ -109,6 +112,13 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
 
+    // 중복 실행 방지
+    if (_isSending) return;
+
+    setState(() {
+      _isSending = true;
+    });
+
     // 사용자 메시지를 먼저 추가
     _addMessages([
       ChatMessage(
@@ -122,18 +132,27 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
     _messageController.clear();
 
     try {
-      // API 호출 (실제 API 엔드포인트에 맞게 수정 필요)
+      // API 호출 - 입력창에서 직접 보낼 때는 request 필드에 텍스트 전송
       final response = await ref
           .read(apiProvider.notifier)
-          .postAsync('/chat/message', {
-            "message": message.trim(),
+          .postAsync('/chat/prompt', {
+            "request": message.trim(),
             "userId": "kko_4364192436",
             "llmModel": "gemini-2.0-flash",
           });
 
       _handleApiResponse(response);
+      // 직접 입력한 메시지에는 퀴즈 버튼 표시하지 않음
+      setState(() {
+        _showQuizButtons = false;
+      });
     } catch (e) {
-      print('메시지 전송 오류: $e');
+      // 메시지 전송 오류 처리
+    } finally {
+      // 전송 완료 후 플래그 리셋
+      setState(() {
+        _isSending = false;
+      });
     }
   }
 
@@ -160,7 +179,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
-            icon: Icon(Icons.menu_outlined, size: 20),
+            icon: Icon(Icons.menu_outlined, size: 22),
             padding: EdgeInsets.zero,
           ),
         ),
@@ -171,7 +190,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
               onTap: () {
                 _startNewChat();
               },
-              child: Icon(Icons.add_outlined, size: 22),
+              child: Icon(Icons.add_outlined, size: 24),
             ),
           ),
         ],
@@ -427,11 +446,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             ),
             // 하단 채팅 입력창
             Transform.translate(
-              offset: Offset(0, keyboardHeight > 0 ? 50 : 0),
+              offset: Offset(0, keyboardHeight > 0 ? Platform.isAndroid ? 50 : 80 : 0),
               child: Container(
                 padding: EdgeInsets.fromLTRB(
                   26,
-                  16,
+                  Platform.isAndroid ? 16 : 0,
                   26,
                   keyboardHeight > 0 ? 0 : 48,
                 ),
@@ -469,29 +488,35 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                             // 입력창 클릭 시 스크롤을 맨 아래로 이동
                             _scrollToBottom();
                           },
-                          onSubmitted: (text) => _sendMessage(text),
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (text) async {
+                            if (text.trim().isNotEmpty && !_isSending) {
+                              await _sendMessage(text);
+                            }
+                          },
                         ),
                       ),
                     ),
                     SizedBox(width: 8),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFE6E6E6),
-                        shape: OvalBorder(),
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () =>
-                              _sendMessage(_messageController.text),
-                          icon: Center(
-                            child: Icon(
-                              Icons.arrow_upward_outlined,
-                              color: Color(0xFF989898),
-                              size: 22,
-                            ),
+                    GestureDetector(
+                      onTap: () async {
+                        final text = _messageController.text;
+                        if (text.trim().isNotEmpty && !_isSending) {
+                          await _sendMessage(text);
+                        }
+                      },
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFE6E6E6),
+                          shape: OvalBorder(),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.arrow_upward_outlined,
+                            color: Color(0xFF989898),
+                            size: 22,
                           ),
                         ),
                       ),
@@ -586,10 +611,8 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  // 퀴즈 버튼들 (마지막 시스템 메시지이고 _showQuizButtons가 true일 때만 표시)
-                  if (_showQuizButtons &&
-                      _messages.isNotEmpty &&
-                      _messages.last == message) ...[
+                  // 퀴즈 버튼들 (type: 1 시스템 메시지이고 _showQuizButtons가 true일 때 표시)
+                  if (_showQuizButtons && message.type == 1) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -641,7 +664,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                 SizedBox(height: 20),
 
                 _buildDrawerItem(Icons.chat_outlined, '이야기가 하고 싶어요.'),
-                _buildDrawerItem(Icons.chat_outlined, '싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '생각 전환을 하고 싶어요.'),
                 _buildDrawerItem(Icons.chat_outlined, '나의 감정을 컨트롤 하기 힘들어.'),
                 _buildDrawerItem(Icons.chat_outlined, '오늘 많이 힘들었어..'),
 
