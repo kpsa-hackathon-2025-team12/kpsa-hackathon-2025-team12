@@ -73,8 +73,21 @@ public class NaverAuthService implements OAuthServiceInterface {
         String clientId = oAuthInfo.getClientId();
         String clientSecret = oAuthInfo.getClientSecret();
         String redirectUri = oAuthInfo.getRedirectUri();
-        String state = URLEncoder.encode(requestStatus, StandardCharsets.UTF_8);
-        log.debug("state : {}", state);
+        //String state = URLEncoder.encode(requestStatus, StandardCharsets.UTF_8);
+
+        if (code.startsWith("http") && code.contains("code=")) {
+            // URL에서 실제 코드값만 추출
+            String[] parts = code.split("code=");
+            if (parts.length > 1) {
+                code = parts[1];
+                // 추가 파라미터가 있는 경우 제거 (code 뒤에 &로 시작하는 파라미터가 있을 수 있음)
+                if (code.contains("&")) {
+                    code = code.split("&")[0];
+                }
+            }
+        }
+
+        log.debug("state : {}", requestStatus);
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
         formData.add("grant_type", "authorization_code");
@@ -82,7 +95,7 @@ public class NaverAuthService implements OAuthServiceInterface {
         formData.add("redirect_uri", redirectUri);
         formData.add("client_secret", clientSecret);
         formData.add("code", code);
-        formData.add("state", state);
+        formData.add("state", requestStatus);
 
         Map<String, String> headers = Map.of("Content-Type", "application/x-www-form-urlencoded");
 

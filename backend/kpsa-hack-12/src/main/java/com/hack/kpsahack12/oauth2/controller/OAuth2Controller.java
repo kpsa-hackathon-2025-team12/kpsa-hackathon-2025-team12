@@ -41,37 +41,43 @@ public class OAuth2Controller {
     private final MemberService memberService;
 
     @GetMapping("/callback/naver")
-    public void callbackNaver(@RequestParam String code, @RequestParam String state, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void callbackNaver(@RequestParam String code, @RequestParam(required = false) String state, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        log.info("code : {}, state : {}", code, state);
+        try {
+            log.info("code : {}, state : {}", code, state);
 
-        OAuth2TokenResponse oAuth2TokenResponse = naverAuthService.getAccessToken(code);
-        log.info("네이버 콜백 인가 함수 호출");
+            OAuth2TokenResponse oAuth2TokenResponse = naverAuthService.getAccessToken(code);
+            log.info("네이버 콜백 인가 함수 호출");
 
-        OAuth2UserResponse userInfo = naverAuthService.getUserInfo(oAuth2TokenResponse.getAccessToken());
-        log.info("user Info : {}", userInfo);
+            OAuth2UserResponse userInfo = naverAuthService.getUserInfo(oAuth2TokenResponse.getAccessToken());
+            log.info("user Info : {}", userInfo);
 
-        Map<String,Object> req = new HashMap<>();
-        req.put("userId", "naver_" + userInfo.getId());
-        req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
-        req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
+            Map<String, Object> req = new HashMap<>();
+            req.put("userId", "naver_" + userInfo.getId());
+            req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
+            req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
 
-        boolean visited = memberService.visitedMember(req.get("userId").toString());
+            boolean visited = memberService.visitedMember(req.get("userId").toString());
 
-        if(visited){ // true 면 이미 로그인 했던 적 상태면
-            memberService.incrementResponseCount(req.get("userId").toString());
-            response.sendRedirect("https://naver.com");
+            if (visited) { // true 면 이미 로그인 했던 적 상태면
+                memberService.incrementResponseCount(req.get("userId").toString());
+//            response.sendRedirect("https://naver.com");
+            }
+
+            int result = memberService.saveRegisterMember(req);
+
+            if (result == 1) {
+//            response.sendRedirect("https://naver.com?userId=" + req.get("userId").toString());
+            } else {
+                throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
+            }
+
+        }catch (Exception e){
+            log.error("ex : {} " , e.getMessage());
+        }finally {
+            log.info("OK NAVER");
         }
-
-        int result = memberService.saveRegisterMember(req);
-
-        if(result == 1) {
-            response.sendRedirect("https://naver.com?userId=" + req.get("userId").toString());
-        }else{
-            throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
-        }
-
-        response.sendRedirect("https://google.com?userId=" + req.get("userId").toString());
+//        response.sendRedirect("https://google.com?userId=" + req.get("userId").toString());
     }
 
 
@@ -87,6 +93,9 @@ public class OAuth2Controller {
     public void kakaoCallback(@RequestParam(required = false) String code,
                               HttpServletRequest request,
                               HttpServletResponse response) throws IOException {
+
+
+        log.info("code : {}", code);
 
         OAuth2TokenResponse oAuth2TokenResponse = kakaoAuthService.getAccessToken(code);
         log.info("카카오 콜백 인가 함수 호출");
@@ -105,7 +114,7 @@ public class OAuth2Controller {
         if(visited) {
             // 이미 로그인 했던 사용자인 경우
             memberService.incrementResponseCount(userId);
-            response.sendRedirect("https://naver.com?userId=" + userId);
+//            response.sendRedirect("https://naver.com?userId=" + userId);
             return; // 추가 처리 중단
         }
 
@@ -113,7 +122,7 @@ public class OAuth2Controller {
         int result = memberService.saveRegisterMember(req);
 
         if(result == 1) {
-            response.sendRedirect("https://naver.com?userId=" + userId);
+//            response.sendRedirect("https://naver.com?userId=" + userId);
         } else {
             throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
         }

@@ -74,6 +74,18 @@ public class KakaoAuthService implements OAuthServiceInterface {
         String clientSecret = oAuthInfo.getClientSecret();
         String redirectUri = oAuthInfo.getRedirectUri();
 
+        if (code.startsWith("http") && code.contains("code=")) {
+            // URL에서 실제 코드값만 추출
+            String[] parts = code.split("code=");
+            if (parts.length > 1) {
+                code = parts[1];
+                // 추가 파라미터가 있는 경우 제거 (code 뒤에 &로 시작하는 파라미터가 있을 수 있음)
+                if (code.contains("&")) {
+                    code = code.split("&")[0];
+                }
+            }
+        }
+
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", clientId);
