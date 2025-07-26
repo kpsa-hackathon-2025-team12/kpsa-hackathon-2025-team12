@@ -1,6 +1,9 @@
 package com.hack.kpsahack12.member.service;
 
 
+import com.hack.kpsahack12.enums.ErrorCode;
+import com.hack.kpsahack12.exception.CustomException;
+import com.hack.kpsahack12.model.dto.modifyMembers;
 import com.hack.kpsahack12.model.entity.member.Members;
 import com.hack.kpsahack12.model.repository.MembersRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,14 +59,22 @@ public class MemberService {
     }
 
     @Transactional
-    public int updateUserInfoToNickName(String nickname, String userId) {
-        int updatedRows = membersRepository.updateUserNickname(nickname, userId);
+    public int updateUserInfo(modifyMembers modify) {
+        String userId = modify.getUserId();
+        String nickname = modify.getNickname();
+        String gender = modify.getGender();
+        String birth = modify.getBirth();
+
+        int updatedRows = membersRepository.updateUserInfo(
+                userId, nickname, gender, birth
+        );
 
         if (updatedRows == 0) {
-            throw new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다: " + userId);
+            throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME, userId);
         }
 
         return updatedRows;
     }
+
 
 }

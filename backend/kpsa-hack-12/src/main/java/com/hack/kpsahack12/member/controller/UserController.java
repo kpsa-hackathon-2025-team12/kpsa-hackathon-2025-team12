@@ -3,13 +3,11 @@ package com.hack.kpsahack12.member.controller;
 import com.hack.kpsahack12.common.ApiResponseV2;
 import com.hack.kpsahack12.enums.ErrorCode;
 import com.hack.kpsahack12.member.service.MemberService;
+import com.hack.kpsahack12.model.dto.modifyMembers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -20,21 +18,20 @@ public class UserController {
 
     private final MemberService memberService;
 
-    @PutMapping("/set/nickname")
-    public ApiResponseV2<?> setNicname(@RequestParam(name = "nickname", required = true) String nickname,
-                                    @RequestParam(name = "userId", required = true) String userId) {
+    @PutMapping("/set/members")
+    public ApiResponseV2<?> setNicname(@RequestBody modifyMembers modify) {
         try {
             log.info("====== setNicname ======");
 
-            int result =  memberService.updateUserInfoToNickName(nickname , userId);
+            int result =  memberService.updateUserInfo(modify);
 
             if(result == 1){
                 return ApiResponseV2.success(
-                        userId
+                        modify.getUserId()
                 );
             }else{
                 return ApiResponseV2.error(
-                        ErrorCode.SERVER_ERROR, userId
+                        ErrorCode.SERVER_ERROR, modify.getUserId()
                 );
             }
 
