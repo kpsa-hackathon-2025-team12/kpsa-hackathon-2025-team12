@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tomate/core/api/api_provider.dart';
 
-class KakaoWebViewScreen extends ConsumerStatefulWidget {
+import '../core/api/api_provider.dart';
+
+class NaverWebViewScreen extends ConsumerStatefulWidget {
   final String authUrl;
 
-  const KakaoWebViewScreen({super.key, required this.authUrl});
+  const NaverWebViewScreen({Key? key, required this.authUrl}) : super(key: key);
 
   @override
-  ConsumerState<KakaoWebViewScreen> createState() => _KakaoWebViewScreenState();
+  ConsumerState<NaverWebViewScreen> createState() => _NaverWebViewScreenState();
 }
 
-class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
+class _NaverWebViewScreenState extends ConsumerState<NaverWebViewScreen> {
   InAppWebViewController? webViewController;
   bool isLoading = true;
 
@@ -21,11 +22,11 @@ class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '카카오 로그인',
+          '네이버 로그인',
           style: TextStyle(
+            color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
           ),
         ),
         centerTitle: true,
@@ -60,14 +61,14 @@ class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
                 isLoading = false;
               });
 
-              // 카카오 로그인 페이지가 로드되면 사용자에게 알림
-              if (url.toString().contains('kauth.kakao.com')) {}
+              // 네이버 로그인 페이지가 로드되면 사용자에게 알림
+              if (url.toString().contains('nid.naver.com')) {}
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               final url = navigationAction.request.url.toString();
               print('URL 변경 감지: $url');
 
-              // 카카오 로그인 성공 콜백 URL 감지 (더 구체적인 조건)
+              // 네이버 로그인 성공 콜백 URL 감지 (더 구체적인 조건)
               if ((url.contains('code=') && url.contains('oauth')) ||
                   url.contains('access_token=') ||
                   (url.contains('callback') && url.contains('code=')) ||
@@ -76,16 +77,16 @@ class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
                       url.contains('code=')) ||
                   (url.startsWith('https://localhost') &&
                       url.contains('code='))) {
-                print('카카오 로그인 성공 감지: $url');
-                // 카카오 OAuth 콜백 API 호출
+                print('네이버 로그인 성공 감지: $url');
+
                 final response = await ref
                     .read(apiProvider.notifier)
-                    .getQueryAsync('/oauth2/callback/kakao', {
+                    .getQueryAsync('/oauth2/callback/naver', {
                   'code': url,
                 });
 
-                print(response);
-                    Future.delayed(Duration(milliseconds: 1000), () {
+                // 1초 후 성공 결과와 함께 화면 닫기
+                Future.delayed(Duration(milliseconds: 1000), () {
                   if (mounted) {
                     Navigator.of(context).pop(true);
                   }
@@ -98,7 +99,7 @@ class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
               if (url.contains('error=') ||
                   url.contains('login/failure') ||
                   url.contains('error_code=')) {
-                print('카카오 로그인 실패: $url');
+                print('네이버 로그인 실패: $url');
 
                 Future.delayed(Duration(milliseconds: 1000), () {
                   if (mounted) {
@@ -112,21 +113,28 @@ class _KakaoWebViewScreenState extends ConsumerState<KakaoWebViewScreen> {
               return NavigationActionPolicy.ALLOW;
             },
             onReceivedError: (controller, request, error) {
-              print('웹뷰 에러: ${error.description}');
+              print('웹뷰 오류: $error');
             },
           ),
           if (isLoading)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: Color(0xFFEB423D)),
-                  SizedBox(height: 16),
-                  Text(
-                    '카카오 로그인 페이지를 불러오는 중...',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                  ),
-                ],
+            Container(
+              color: Colors.white,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF03C75A),
+                      ), // 네이버 초록색
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      '네이버 로그인 페이지를 불러오는 중...',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
