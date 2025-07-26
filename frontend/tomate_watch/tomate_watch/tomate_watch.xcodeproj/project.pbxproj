@@ -1,0 +1,673 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0599C8BC2E34A308003451DD /* tomate_watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0599C8BB2E34A308003451DD /* tomate_watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0599C8BD2E34A308003451DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0599C8AF2E34A308003451DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0599C8BA2E34A308003451DD;
+			remoteInfo = "tomate_watch Watch App";
+		};
+		0599C8CE2E34A30A003451DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0599C8AF2E34A308003451DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0599C8BA2E34A308003451DD;
+			remoteInfo = "tomate_watch Watch App";
+		};
+		0599C8D82E34A30A003451DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0599C8AF2E34A308003451DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0599C8BA2E34A308003451DD;
+			remoteInfo = "tomate_watch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0599C8E42E34A30A003451DD /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				0599C8BC2E34A308003451DD /* tomate_watch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0599C8B52E34A308003451DD /* tomate_watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tomate_watch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0599C8BB2E34A308003451DD /* tomate_watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "tomate_watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0599C8CD2E34A30A003451DD /* tomate_watch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "tomate_watch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0599C8D72E34A30A003451DD /* tomate_watch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "tomate_watch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0599C8BF2E34A308003451DD /* tomate_watch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "tomate_watch Watch App";
+			sourceTree = "<group>";
+		};
+		0599C8D02E34A30A003451DD /* tomate_watch Watch AppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "tomate_watch Watch AppTests";
+			sourceTree = "<group>";
+		};
+		0599C8DA2E34A30A003451DD /* tomate_watch Watch AppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "tomate_watch Watch AppUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0599C8B82E34A308003451DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8CA2E34A30A003451DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8D42E34A30A003451DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0599C8AE2E34A308003451DD = {
+			isa = PBXGroup;
+			children = (
+				0599C8BF2E34A308003451DD /* tomate_watch Watch App */,
+				0599C8D02E34A30A003451DD /* tomate_watch Watch AppTests */,
+				0599C8DA2E34A30A003451DD /* tomate_watch Watch AppUITests */,
+				0599C8B62E34A308003451DD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0599C8B62E34A308003451DD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0599C8B52E34A308003451DD /* tomate_watch.app */,
+				0599C8BB2E34A308003451DD /* tomate_watch Watch App.app */,
+				0599C8CD2E34A30A003451DD /* tomate_watch Watch AppTests.xctest */,
+				0599C8D72E34A30A003451DD /* tomate_watch Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0599C8B42E34A308003451DD /* tomate_watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0599C8E52E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch" */;
+			buildPhases = (
+				0599C8B32E34A308003451DD /* Resources */,
+				0599C8E42E34A30A003451DD /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0599C8BE2E34A308003451DD /* PBXTargetDependency */,
+			);
+			name = tomate_watch;
+			packageProductDependencies = (
+			);
+			productName = tomate_watch;
+			productReference = 0599C8B52E34A308003451DD /* tomate_watch.app */;
+			productType = "com.apple.product-type.application.watchapp2-container";
+		};
+		0599C8BA2E34A308003451DD /* tomate_watch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0599C8E12E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch App" */;
+			buildPhases = (
+				0599C8B72E34A308003451DD /* Sources */,
+				0599C8B82E34A308003451DD /* Frameworks */,
+				0599C8B92E34A308003451DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0599C8BF2E34A308003451DD /* tomate_watch Watch App */,
+			);
+			name = "tomate_watch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "tomate_watch Watch App";
+			productReference = 0599C8BB2E34A308003451DD /* tomate_watch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0599C8CC2E34A30A003451DD /* tomate_watch Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0599C8E82E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch AppTests" */;
+			buildPhases = (
+				0599C8C92E34A30A003451DD /* Sources */,
+				0599C8CA2E34A30A003451DD /* Frameworks */,
+				0599C8CB2E34A30A003451DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0599C8CF2E34A30A003451DD /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0599C8D02E34A30A003451DD /* tomate_watch Watch AppTests */,
+			);
+			name = "tomate_watch Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "tomate_watch Watch AppTests";
+			productReference = 0599C8CD2E34A30A003451DD /* tomate_watch Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		0599C8D62E34A30A003451DD /* tomate_watch Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0599C8EB2E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch AppUITests" */;
+			buildPhases = (
+				0599C8D32E34A30A003451DD /* Sources */,
+				0599C8D42E34A30A003451DD /* Frameworks */,
+				0599C8D52E34A30A003451DD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0599C8D92E34A30A003451DD /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				0599C8DA2E34A30A003451DD /* tomate_watch Watch AppUITests */,
+			);
+			name = "tomate_watch Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "tomate_watch Watch AppUITests";
+			productReference = 0599C8D72E34A30A003451DD /* tomate_watch Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0599C8AF2E34A308003451DD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					0599C8B42E34A308003451DD = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					0599C8BA2E34A308003451DD = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					0599C8CC2E34A30A003451DD = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 0599C8BA2E34A308003451DD;
+					};
+					0599C8D62E34A30A003451DD = {
+						CreatedOnToolsVersion = 16.1;
+						TestTargetID = 0599C8BA2E34A308003451DD;
+					};
+				};
+			};
+			buildConfigurationList = 0599C8B22E34A308003451DD /* Build configuration list for PBXProject "tomate_watch" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0599C8AE2E34A308003451DD;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0599C8B62E34A308003451DD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0599C8B42E34A308003451DD /* tomate_watch */,
+				0599C8BA2E34A308003451DD /* tomate_watch Watch App */,
+				0599C8CC2E34A30A003451DD /* tomate_watch Watch AppTests */,
+				0599C8D62E34A30A003451DD /* tomate_watch Watch AppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0599C8B32E34A308003451DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8B92E34A308003451DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8CB2E34A30A003451DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8D52E34A30A003451DD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0599C8B72E34A308003451DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8C92E34A30A003451DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0599C8D32E34A30A003451DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0599C8BE2E34A308003451DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0599C8BA2E34A308003451DD /* tomate_watch Watch App */;
+			targetProxy = 0599C8BD2E34A308003451DD /* PBXContainerItemProxy */;
+		};
+		0599C8CF2E34A30A003451DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0599C8BA2E34A308003451DD /* tomate_watch Watch App */;
+			targetProxy = 0599C8CE2E34A30A003451DD /* PBXContainerItemProxy */;
+		};
+		0599C8D92E34A30A003451DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0599C8BA2E34A308003451DD /* tomate_watch Watch App */;
+			targetProxy = 0599C8D82E34A30A003451DD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0599C8DF2E34A30A003451DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		0599C8E02E34A30A003451DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		0599C8E22E34A30A003451DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "tomate_watch Watch App/tomate_watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"tomate_watch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = L75C42574S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		0599C8E32E34A30A003451DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "tomate_watch Watch App/tomate_watch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"tomate_watch Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = L75C42574S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
+		0599C8E62E34A30A003451DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		0599C8E72E34A30A003451DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				INFOPLIST_KEY_CFBundleDisplayName = tomate_watch;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0599C8E92E34A30A003451DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tomate_watch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/tomate_watch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		0599C8EA2E34A30A003451DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/tomate_watch Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/tomate_watch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
+		0599C8EC2E34A30A003451DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "tomate_watch Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Debug;
+		};
+		0599C8ED2E34A30A003451DD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L75C42574S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.juseunghyun.heart-rate-measurement.tomate-watch-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "tomate_watch Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0599C8B22E34A308003451DD /* Build configuration list for PBXProject "tomate_watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0599C8DF2E34A30A003451DD /* Debug */,
+				0599C8E02E34A30A003451DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0599C8E12E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0599C8E22E34A30A003451DD /* Debug */,
+				0599C8E32E34A30A003451DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0599C8E52E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0599C8E62E34A30A003451DD /* Debug */,
+				0599C8E72E34A30A003451DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0599C8E82E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0599C8E92E34A30A003451DD /* Debug */,
+				0599C8EA2E34A30A003451DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0599C8EB2E34A30A003451DD /* Build configuration list for PBXNativeTarget "tomate_watch Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0599C8EC2E34A30A003451DD /* Debug */,
+				0599C8ED2E34A30A003451DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0599C8AF2E34A308003451DD /* Project object */;
+}
