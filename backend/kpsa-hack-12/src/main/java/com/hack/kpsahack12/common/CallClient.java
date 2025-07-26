@@ -1,5 +1,7 @@
 package com.hack.kpsahack12.common;
 
+import com.hack.kpsahack12.enums.ErrorCode;
+import com.hack.kpsahack12.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,7 @@ public class CallClient {
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 
-        return "";
+        return resultHandler(response);
     }
 
     public String POST(String uri, Map<String, String> headers, Object body) {
@@ -31,7 +33,7 @@ public class CallClient {
         HttpEntity<Object> entity = new HttpEntity<>(body, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
-        return "";
+        return resultHandler(response);
     }
 
     // 폼 데이터 전송을 위한 메서드
@@ -47,7 +49,7 @@ public class CallClient {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formData, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
-        return "";
+        return resultHandler(response);
     }
 
 
@@ -60,7 +62,7 @@ public class CallClient {
         HttpEntity<String> entity = new HttpEntity<>(jsonBody, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
-        return "";
+        return resultHandler(response);
     }
 
     // 바이너리 데이터를 전송하기 위한 메서드
@@ -71,6 +73,19 @@ public class CallClient {
         HttpEntity<byte[]> entity = new HttpEntity<>(byteBody, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, entity, String.class);
 
-        return "";
+        return resultHandler(response);
+    }
+
+    private String resultHandler(ResponseEntity<String> response) {
+        try {
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                String msg = "Http " + response.getStatusCode().value() + ": " +
+                        (response.getBody() != null ? response.getBody() : "Unknown Error");
+                throw new CustomException(ErrorCode.FAILED_TO_CALL_CLIENT, msg);
+            }
+            return response.getBody() != null ? response.getBody() : ErrorCode.NOT_FOUND_USER_NAME.getMessage();
+        } catch (Exception ex) {
+            throw new CustomException(ErrorCode.CALL_REQUEST_BODY_NULL, ex.getMessage());
+        }
     }
 }
