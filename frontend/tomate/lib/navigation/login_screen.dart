@@ -267,8 +267,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           // TODO: 신규 사용자인지 기존 사용자인지에 따라 분기 처리
           // 현재는 신규 사용자로 가정
           // 잠시 주석
-          GoRouter.of(context).goNamed(AppRoutes.userInfoScreen.name);
-          // GoRouter.of(context).goNamed(AppRoutes.home1Screen.name);
+          // GoRouter.of(context).goNamed(AppRoutes.userInfoScreen.name);
+          GoRouter.of(context).goNamed(AppRoutes.home1Screen.name);
         }
       });
     }

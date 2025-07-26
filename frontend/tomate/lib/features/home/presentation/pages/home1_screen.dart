@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// import 'package:lottie/lottie.dart'; // Lottie 애니메이션 사용시 주석 해제
 import '../../../../common/widgets/common_app_bar.dart';
 
 class Home1Screen extends ConsumerStatefulWidget {
@@ -15,8 +15,8 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     with TickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
-  late AnimationController _stairAnimationController;
-  late Animation<double> _stairAnimation;
+  late AnimationController _bounceAnimationController;
+  late Animation<double> _bounceAnimation;
   int _currentPage = 0;
 
   // 각 카드별 진행 상태 관리 (0: 지하철역, 1: 산책, 2: 공원벤치)
@@ -31,29 +31,28 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
       vsync: this,
     );
 
-    // 계단 애니메이션 컨트롤러 - 토마토가 계단을 통통통 뛰어내려가는 애니메이션
-    _stairAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 6000), // 3초로 늘려서 더 자연스럽게
+    // 토마토 통통 뛰는 애니메이션 컨트롤러
+    _bounceAnimationController = AnimationController(
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    // 바운스 효과가 있는 계단 애니메이션 커브
-    _stairAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _bounceAnimation = Tween<double>(begin: 0.0, end: -20.0).animate(
       CurvedAnimation(
-        parent: _stairAnimationController,
-        curve: Curves.bounceOut, // 바운스 효과로 통통 뛰는 느낌
+        parent: _bounceAnimationController,
+        curve: Curves.elasticOut,
       ),
     );
 
-    // 애니메이션 반복 시작 (내려갔다가 올라오기)
-    _stairAnimationController.repeat(reverse: true);
+    // 애니메이션 반복 시작
+    _bounceAnimationController.repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     _animationController.dispose();
-    _stairAnimationController.dispose();
+    _bounceAnimationController.dispose();
     super.dispose();
   }
 
@@ -102,111 +101,64 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
     return Text.rich(TextSpan(children: spans));
   }
 
-  /// 1번째 카드: 지하철역 입구 - 토마토가 계단을 통통통 뛰어내려가고 올라오는 애니메이션 위젯
+  /// 1번째 카드: 지하철역 입구 애니메이션 위젯
   Widget _buildStairAnimation(bool isActive) {
-    return AnimatedBuilder(
-      animation: _stairAnimation,
-      builder: (context, child) {
-        // TODO: 지하철역 계단 Lottie 애니메이션을 넣을 자리입니다!
-        // 사용 예시:
-        // return Lottie.asset(
-        //   'assets/animations/subway_stairs_animation.json',
-        //   width: double.infinity,
-        //   height: double.infinity,
-        //   fit: BoxFit.contain,
-        //   controller: _stairAnimationController, // 기존 애니메이션 컨트롤러 재사용 가능
-        // );
-
-        // 임시 플레이스홀더 (Lottie 넣을 때까지)
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: const Color(0xFFE8F4FD),
-          child: const Center(
-            child: Text(
-              '🍅\n지하철역 계단\nLottie 애니메이션 자리',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
+    return SizedBox(
+      width: double.infinity,
+      height: double.infinity,
+      child: Stack(
+        children: [
+          // 지하철역 입구 이미지 (정적)
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset(
+              'assets/icons/subway.png', // subway PNG 이미지
+              width: 135.w,
+              height: 115.h,
             ),
           ),
-        );
-      },
+          // 토마토 캐릭터 (애니메이션)
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Positioned(
+                right: 0,
+                bottom: 30 + _bounceAnimation.value,
+                child: Image.asset(
+                  'assets/icons/last_tomato.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  /// 2번째 카드: 산책 - 토마토가 산책하는 애니메이션 위젯
+  /// 2번째 카드: 산책 애니메이션 위젯
   Widget _buildWalkAnimation(bool isActive) {
-    return AnimatedBuilder(
-      animation: _stairAnimation,
-      builder: (context, child) {
-        // TODO: 산책 Lottie 애니메이션을 넣을 자리입니다!
-        // 사용 예시:
-        // return Lottie.asset(
-        //   'assets/animations/walk_animation.json',
-        //   width: double.infinity,
-        //   height: double.infinity,
-        //   fit: BoxFit.contain,
-        //   controller: _stairAnimationController, // 기존 애니메이션 컨트롤러 재사용 가능
-        // );
-
-        // 임시 플레이스홀더 (Lottie 넣을 때까지)
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: const Color(0xFFE8F4FD),
-          child: const Center(
-            child: Text(
-              '🚶‍♂️\n산책\nLottie 애니메이션 자리',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        );
-      },
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F4FD),
+        borderRadius: BorderRadius.circular(16),
+      ),
     );
   }
 
-  /// 3번째 카드: 공원 벤치 - 토마토가 공원에서 책 읽는 애니메이션 위젯
+  /// 3번째 카드: 공원 벤치 애니메이션 위젯
   Widget _buildParkAnimation(bool isActive) {
-    return AnimatedBuilder(
-      animation: _stairAnimation,
-      builder: (context, child) {
-        // TODO: 공원 벤치 Lottie 애니메이션을 넣을 자리입니다!
-        // 사용 예시:
-        // return Lottie.asset(
-        //   'assets/animations/park_bench_animation.json',
-        //   width: double.infinity,
-        //   height: double.infinity,
-        //   fit: BoxFit.contain,
-        //   controller: _stairAnimationController, // 기존 애니메이션 컨트롤러 재사용 가능
-        // );
-
-        // 임시 플레이스홀더 (Lottie 넣을 때까지)
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: const Color(0xFFE8F4FD),
-          child: const Center(
-            child: Text(
-              '📚\n공원 벤치\nLottie 애니메이션 자리',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        );
-      },
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F4FD),
+        borderRadius: BorderRadius.circular(16),
+      ),
     );
   }
 
@@ -416,13 +368,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
 
               // 일러스트 영역
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: const Color(0xFFE8F4FD), // 모든 카드 배경색 통일
-                  ),
-                  child: _getAnimationWidget(index, isActive),
-                ),
+                child: _getAnimationWidget(index, isActive),
               ),
               const SizedBox(height: 20),
 
