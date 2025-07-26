@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tomate/navigation/kakao_webview_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -226,28 +227,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
         print('카카오 로그인 URL: $kakaoAuthUrl');
 
-        // 인앱 브라우저로 카카오 로그인 처리
-        try {
-          final bool launched = await launchUrl(
-            Uri.parse(kakaoAuthUrl),
-            mode: LaunchMode.inAppBrowserView,
-            webViewConfiguration: WebViewConfiguration(
-              enableJavaScript: true,
-              enableDomStorage: true,
-            ),
-          );
+        // 웹뷰 스크린으로 카카오 로그인 처리
+        final bool success =
+            await Navigator.of(context).push<bool>(
+              MaterialPageRoute(
+                builder: (context) => KakaoWebViewScreen(authUrl: kakaoAuthUrl),
+              ),
+            ) ??
+            false;
 
-          if (launched) {
-            // 사용자가 로그인을 완료했다고 가정하고 성공 처리
-            // 실제로는 콜백 URL을 통해 자동으로 처리되어야 하지만
-            // 일단 사용자가 인앱 브라우저를 닫으면 성공으로 간주
-            await _handleLoginSuccess();
-          } else {
-            _showErrorSnackbar('카카오 로그인을 열 수 없습니다.');
-          }
-        } catch (e) {
-          print('카카오 로그인 오류: $e');
-          _showErrorSnackbar('카카오 로그인 중 오류가 발생했습니다.');
+        if (success) {
+          print('카카오 로그인 성공!');
+          await _handleLoginSuccess();
+        } else {
+          print('카카오 로그인 취소 또는 실패');
+          _showErrorSnackbar('카카오 로그인이 취소되었습니다.');
         }
       } else if (platform == "네이버") {
         final response = await ref
@@ -290,16 +284,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Future<void> _handleLoginSuccess() async {
     // 로그인 성공 스낵바 표시
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('카카오 로그인이 완료되었습니다!'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
-
       // 2초 후 다음 화면으로 이동
-      Future.delayed(Duration(seconds: 2), () {
         if (mounted) {
           // TODO: 신규 사용자인지 기존 사용자인지에 따라 분기 처리
           // 현재는 신규 사용자로 가정
@@ -307,7 +292,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           // GoRouter.of(context).goNamed(AppRoutes.userInfoScreen.name);
           GoRouter.of(context).goNamed(AppRoutes.home1Screen.name);
         }
-      });
     }
   }
 
