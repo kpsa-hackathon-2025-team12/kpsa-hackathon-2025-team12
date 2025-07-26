@@ -12,6 +12,9 @@ import lombok.Setter;
 @Setter
 public class UserChatResponseDto {
 
+    private Long idx;
+    private int type;
+    private String request;
     private String response;
 
     public UserChatResponseDto(LlmChatResponseDto llmChatResponseDto) {

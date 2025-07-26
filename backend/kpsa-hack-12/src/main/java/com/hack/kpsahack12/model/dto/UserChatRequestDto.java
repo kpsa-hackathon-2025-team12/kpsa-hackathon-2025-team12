@@ -12,5 +12,6 @@ import lombok.Setter;
 public class UserChatRequestDto{
 
     private String request;
+    private String userId;
     private LlmModel llmModel;
 }
