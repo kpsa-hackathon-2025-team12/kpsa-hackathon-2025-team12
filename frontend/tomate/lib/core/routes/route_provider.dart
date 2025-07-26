@@ -256,8 +256,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'homeScreen',
             parentNavigatorKey: shellNavigatorKey,
             pageBuilder: (context, state) {
+              // level 파라미터 추출 (기본값: 1)
+              final levelParam = state.uri.queryParameters['level'];
+              final level = int.tryParse(levelParam ?? '1') ?? 1; // 레벨 수정
+
               return CustomTransitionPage(
-                child: const Home1Screen(),
+                child: Home1Screen(level: level),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                       return child;
@@ -270,8 +274,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'home1Screen',
             parentNavigatorKey: shellNavigatorKey,
             pageBuilder: (context, state) {
+              // level 파라미터 추출 (기본값: 1)
+              final levelParam = state.uri.queryParameters['level'];
+              final level = int.tryParse(levelParam ?? '1') ?? 1;
+
               return CustomTransitionPage(
-                child: const Home1Screen(),
+                child: Home1Screen(level: level),
                 transitionsBuilder:
                     (context, animation, secondaryAnimation, child) {
                       return child;

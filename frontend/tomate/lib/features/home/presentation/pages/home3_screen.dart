@@ -32,6 +32,12 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
   // 더미 데이터
   final List<DiaryEntry> diaryEntries = [
     DiaryEntry(
+      date: DateTime(2025, 7, 27),
+      title: "해커톤 당일",
+      content: "해커톤 당일이라 너무 떨린다... 숨이 잘 안 쉬어져서 힘들어",
+      mood: 1,
+    ),
+    DiaryEntry(
       date: DateTime.now().subtract(const Duration(days: 1)),
       title: "오늘의 일기",
       content: "좋은 하루였어요!",
@@ -182,17 +188,14 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
     );
   }
 
-  Widget _buildTransport(){
+  Widget _buildTransport() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0xFF4D4D4D),
-          ),
+          side: BorderSide(width: 1, color: const Color(0xFF4D4D4D)),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
@@ -615,37 +618,35 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0xFF4D4D4D),
-          ),
+          side: BorderSide(width: 1, color: const Color(0xFF4D4D4D)),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-      Text.rich(
-      TextSpan(
-      children: [
-        TextSpan(
-        text: '이번 달, 승현님은 ',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      TextSpan(
-        text: '많이 편해졌어요',
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      ],
-    ),),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '이번 달, 승현님은 ',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextSpan(
+                  text: '많이 편해졌어요',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 4),
           Text(
             '평균 불안 점수: 3.5 → 1.5점  /  미션: 87%  /  대처 횟수: 8회',
@@ -655,7 +656,7 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -664,14 +665,11 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
   Widget _buildMonthlyDiary() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: const Color(0xFF4D4D4D),
-          ),
+          side: BorderSide(width: 1, color: const Color(0xFF4D4D4D)),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
@@ -721,7 +719,7 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
