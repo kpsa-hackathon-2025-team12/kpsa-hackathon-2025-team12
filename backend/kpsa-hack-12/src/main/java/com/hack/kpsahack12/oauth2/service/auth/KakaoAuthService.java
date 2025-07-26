@@ -13,8 +13,11 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -62,6 +65,31 @@ public class KakaoAuthService implements OAuthServiceInterface {
 
     @Override
     public OAuth2TokenResponse getAccessToken(String code) throws IOException {
+
+        String clientId = oAuthInfo.getClientId();
+        String clientSecret = oAuthInfo.getClientSecret();
+        String redirectUri = oAuthInfo.getRedirectUri();
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "authorization_code");
+        formData.add("client_id", clientId);
+        formData.add("redirect_uri", redirectUri);
+        formData.add("client_secret", clientSecret);
+        formData.add("code", code);
+
+        Map<String, String> headers = Map.of("Content-Type", "application/x-www-form-urlencoded");
+
+        String jsonString = callClient.POST(oAuthInfo.getAuthUrl().getAuthToken(), headers, formData);
+        log.info("jsonString : {}", jsonString);
+
+        // {
+        // "access_token":"rVVeHz2GwqQl4aKkyI_NzgICu2R58qC6AAAAAQoNDSEAAAGXgdOiZMTTXs9KIG_V",
+        // "token_type":"bearer",
+        // "refresh_token":"QdA_AW_rbc1_caxOuBiSZ7LNr3lXbjkpAAAAAgoNDSEAAAGXgdOiW8TTXs9KIG_V",
+        // "expires_in":21599,
+        // "scope":"talk_message profile_nickname",
+        // "refresh_token_expires_in":5183999
+        // }
 
         return null;
     }
