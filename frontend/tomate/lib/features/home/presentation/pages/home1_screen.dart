@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -154,7 +156,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _bounceAnimation,
             builder: (context, child) {
               return Positioned(
-                right: 0,
+                right: Platform.isAndroid ? 0 : 30,
                 bottom: 24 + _bounceAnimation.value,
                 child: Image.asset(
                   'assets/icons/last_tomato.png',
@@ -191,7 +193,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _walkAnimationController,
             builder: (context, child) {
               return Positioned(
-                left: _walkHorizontalAnimation.value,
+                left: Platform.isAndroid ? _walkHorizontalAnimation.value : _walkHorizontalAnimation.value + 30,
                 bottom:
                     10 +
                     (_walkVerticalAnimation.value *
@@ -233,7 +235,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             animation: _bounceAnimation,
             builder: (context, child) {
               return Positioned(
-                right: 32,
+                right: Platform.isAndroid ? 32 : 87,
                 bottom: 50 + _bounceAnimation.value,
                 child: Image.asset(
                   'assets/icons/left_tomato.png',
