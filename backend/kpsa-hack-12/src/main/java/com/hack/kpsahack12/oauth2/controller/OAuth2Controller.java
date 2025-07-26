@@ -135,7 +135,7 @@ public class OAuth2Controller {
 
         try{
             log.info("naver login");
-            return ApiResponseV2.success("");
+            return ApiResponseV2.success(naverAuthService.getPermissionCodeUrl());
         }catch (Exception ex){
             throw new CustomException(ErrorCode.NOT_FOUND_OAUTH_PROVIDER);
         }
