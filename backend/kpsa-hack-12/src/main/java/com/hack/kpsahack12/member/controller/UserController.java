@@ -18,14 +18,6 @@ public class UserController {
 
     private final MemberService memberService;
 
-    @PostMapping("/set/breath")
-    public ApiResponseV2<?> setBreath(@RequestBody modifyMembers modify) {
-        // 대처 횟수 증가 필요
-        // 일기에 저장
-        return ApiResponseV2.success(modify.getUserId());
-    }
-
-
     @PutMapping("/set/members")
     public ApiResponseV2<?> setNicname(@RequestBody modifyMembers modify) {
         try {
