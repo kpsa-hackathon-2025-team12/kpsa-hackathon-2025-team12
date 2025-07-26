@@ -145,8 +145,8 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             bottom: 0,
             child: Image.asset(
               'assets/icons/subway.png', // subway PNG 이미지
-              width: 135.w,
-              height: 115.h,
+              width: 104,
+              height: 96,
             ),
           ),
           // 토마토 캐릭터 (애니메이션)
@@ -155,7 +155,7 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             builder: (context, child) {
               return Positioned(
                 right: 0,
-                bottom: 0 + _bounceAnimation.value,
+                bottom: 24 + _bounceAnimation.value,
                 child: Image.asset(
                   'assets/icons/last_tomato.png',
                   width: 57,
@@ -182,8 +182,8 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
             bottom: 0,
             child: Image.asset(
               'assets/icons/station.png', // station PNG 이미지
-              width: 117.w,
-              height: 100.h,
+              width: 104,
+              height: 94,
             ),
           ),
           // 토마토 캐릭터 (걷기 애니메이션)
@@ -213,12 +213,37 @@ class _Home1ScreenState extends ConsumerState<Home1Screen>
 
   /// 3번째 카드: 공원 벤치 애니메이션 위젯
   Widget _buildParkAnimation(bool isActive) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE8F4FD),
-        borderRadius: BorderRadius.circular(16),
+      child: Stack(
+        children: [
+          // 서점 이미지 (정적)
+          Positioned(
+            left: 30,
+            bottom: 0,
+            child: Image.asset(
+              'assets/icons/bookstore.png', // bookstore PNG 이미지
+              width: 114,
+              height: 54,
+            ),
+          ),
+          // 토마토 캐릭터 (애니메이션)
+          AnimatedBuilder(
+            animation: _bounceAnimation,
+            builder: (context, child) {
+              return Positioned(
+                right: 32,
+                bottom: 50 + _bounceAnimation.value,
+                child: Image.asset(
+                  'assets/icons/left_tomato.png',
+                  width: 57,
+                  height: 69,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
