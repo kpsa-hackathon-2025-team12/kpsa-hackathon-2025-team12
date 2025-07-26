@@ -183,44 +183,41 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
   }
 
   Widget _buildTransport(){
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: const Color(0xFF4D4D4D),
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 1,
+            color: const Color(0xFF4D4D4D),
           ),
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: '대중교통',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                TextSpan(
-                  text: '을 회피 하고 싶은 날이 가장 많았어요.',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          borderRadius: BorderRadius.circular(8),
         ),
-      ],
+      ),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '대중교통',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            TextSpan(
+              text: '을 회피 하고 싶은 날이 가장 많았어요.',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -371,7 +368,7 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
                     ),
                   ),
                   if (hasDiary && moodEmoji != null)
-                    Text(moodEmoji, style: TextStyle(fontSize: 12)),
+                    Text(moodEmoji, style: TextStyle(fontSize: 14)),
                 ],
               ),
             ),
@@ -666,6 +663,7 @@ class _Home3ScreenState extends ConsumerState<Home3Screen>
 
   Widget _buildMonthlyDiary() {
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 24,vertical: 20),
       decoration: ShapeDecoration(
         color: Colors.white,
