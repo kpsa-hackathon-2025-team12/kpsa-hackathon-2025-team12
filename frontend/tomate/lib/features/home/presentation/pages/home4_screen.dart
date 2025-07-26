@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tomate/core/routes/route_provider.dart';
 
 class Home4Screen extends ConsumerWidget {
   const Home4Screen({super.key});
@@ -8,84 +10,87 @@ class Home4Screen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: Color(0xFFFFFFF5),
       appBar: AppBar(
         title: Text(
           '내 정보',
           style: TextStyle(
-            fontSize: 18.sp,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Pretendard',
             color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFFFFFF5),
         elevation: 0,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 40.h),
+            SizedBox(height: 36),
             // 프로필 섹션
             Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                shape: BoxShape.circle,
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(shape: BoxShape.circle),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/my.png',
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                ),
               ),
               // 나중에 에셋 이미지로 교체될 부분
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: 25),
             // 사용자 정보
             Container(
               width: double.infinity,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+              padding: EdgeInsets.symmetric(horizontal: 28, vertical: 12),
               child: Row(
                 children: [
-                  Text(
-                    '주솜님',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Pretendard',
-                      color: Colors.black,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '주승현',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'tmdgus4475@gmail.com',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF666666)
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const Spacer(),
                   Icon(
                     Icons.chevron_right,
-                    size: 20.sp,
-                    color: Colors.grey.shade400,
+                    size: 24,
+                    color: Color(0xFF757575),
                   ),
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
-              child: Text(
-                'memorycoll22@naver.com',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'Pretendard',
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ),
-            SizedBox(height: 30.h),
+            _buildDivider(),
+            SizedBox(height: 30),
             // 메뉴 섹션
             Container(
-              color: Colors.white,
               child: Column(
                 children: [
                   _buildMenuItemWithArrow('리포트'),
                   _buildDivider(),
-                  _buildMenuItem('투자 일정'),
+                  _buildMenuItem('푸시 알림'),
                   _buildDivider(),
                   _buildMenuItem('문의하기'),
                   _buildDivider(),
@@ -93,34 +98,26 @@ class Home4Screen extends ConsumerWidget {
                 ],
               ),
             ),
-            SizedBox(height: 40.h),
+            SizedBox(height: 40),
             // 로그아웃 버튼
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 20.w),
-              child: TextButton(
+          TextButton(
                 onPressed: () {
                   // 로그아웃 로직
+                  GoRouter.of(context).pushNamed(AppRoutes.splashScreen.name);
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 15.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 child: Text(
                   '로그아웃',
                   style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Pretendard',
-                    color: Colors.grey.shade600,
+                    color: Color(0xFFA5A5A5),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
-                ),
-              ),
+                )
             ),
-            SizedBox(height: 40.h),
+            SizedBox(height: 40),
           ],
         ),
       ),
@@ -128,43 +125,53 @@ class Home4Screen extends ConsumerWidget {
   }
 
   Widget _buildMenuItem(String title) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      color: Colors.white,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Pretendard',
-            color: Colors.black,
-          ),
+        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18),
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.chevron_right,
+              size: 24,
+              color: Color(0xFF757575),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildMenuItemWithArrow(String title) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      color: Colors.white,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+        padding: EdgeInsets.symmetric(horizontal: 28, vertical: 18),
         child: Row(
           children: [
             Text(
               title,
               style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Pretendard',
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
             const Spacer(),
-            Icon(Icons.chevron_right, size: 20.sp, color: Colors.grey.shade400),
+            Icon(
+              Icons.chevron_right,
+              size: 24,
+              color: Color(0xFF757575),
+            ),
           ],
         ),
       ),
@@ -172,10 +179,12 @@ class Home4Screen extends ConsumerWidget {
   }
 
   Widget _buildDivider() {
-    return Container(
-      height: 1.h,
-      margin: EdgeInsets.only(left: 20.w),
-      color: Colors.grey.shade200,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.0),
+      child: Container(
+        height: 1,
+        color: Color(0xFFBCBCBC),
+      ),
     );
   }
 }
