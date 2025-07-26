@@ -97,10 +97,15 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         response.data != null &&
         response.data['data'] != null) {
       List<ChatMessage> newMessages = [];
+
+      // 기존 메시지의 idx 목록 생성 (중복 방지용)
+      Set<int> existingIdx = _messages.map((msg) => msg.idx).toSet();
+
       for (var messageData in response.data['data']) {
         ChatMessage message = ChatMessage.fromJson(messageData);
-        // 빈 문자열이 아닌 메시지만 추가
-        if (message.memberLogs.trim().isNotEmpty) {
+        // 빈 문자열이 아니고, 아직 추가되지 않은 메시지만 추가
+        if (message.memberLogs.trim().isNotEmpty &&
+            !existingIdx.contains(message.idx)) {
           newMessages.add(message);
         }
       }
@@ -119,15 +124,15 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
       _isSending = true;
     });
 
-    // 사용자 메시지를 먼저 추가
-    _addMessages([
-      ChatMessage(
-        memberLogs: message.trim(),
-        buttonType: 0,
-        idx: DateTime.now().millisecondsSinceEpoch,
-        type: 0, // 사용자 메시지
-      ),
-    ]);
+    // // 사용자 메시지를 먼저 추가
+    // _addMessages([
+    //   ChatMessage(
+    //     memberLogs: message.trim(),
+    //     buttonType: 0,
+    //     idx: DateTime.now().millisecondsSinceEpoch,
+    //     type: 0, // 사용자 메시지
+    //   ),
+    // ]);
 
     _messageController.clear();
 
@@ -446,13 +451,20 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             ),
             // 하단 채팅 입력창
             Transform.translate(
-              offset: Offset(0, keyboardHeight > 0 ? Platform.isAndroid ? 50 : 80 : 0),
+              offset: Offset(
+                0,
+                keyboardHeight > 0
+                    ? Platform.isAndroid
+                          ? 50
+                          : 80
+                    : 0,
+              ),
               child: Container(
                 padding: EdgeInsets.fromLTRB(
                   26,
                   Platform.isAndroid ? 16 : 0,
                   26,
-                  keyboardHeight > 0 ? 0 : 48,
+                  keyboardHeight > 0 ? 35 : 48,
                 ),
                 child: Row(
                   children: [
