@@ -1,1 +1,29 @@
 
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+        use_sql_comments: false
+        show_sql: false
+
+mode : ${spring.profiles.active}
+
+path.common: classpath:/env/${mode}/common.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: ${mode}
+    import:
+      - ${path.common}
+...
