@@ -1,5 +1,7 @@
 package com.hack.kpsahack12.member.controller;
 
+import com.hack.kpsahack12.common.ApiResponseV2;
+import com.hack.kpsahack12.enums.ErrorCode;
 import com.hack.kpsahack12.member.service.MemberService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,26 @@ public class UserController {
     private final MemberService memberService;
 
     @PutMapping("/set/nicname")
-    public void setNicname(@RequestParam(name = "nickname", required = true) String nicname,
-                           @RequestParam(name = "userId", required = true) String userId) {
+    public ApiResponseV2<?> setNicname(@RequestParam(name = "nickname", required = true) String nickname,
+                                    @RequestParam(name = "userId", required = true) String userId) {
         try {
             log.info("====== setNicname ======");
+
+            int result =  memberService.updateUserInfoToNickName(nickname , userId);
+
+            if(result == 1){
+                return ApiResponseV2.success(
+                        userId
+                );
+            }else{
+                return ApiResponseV2.error(
+                        ErrorCode.SERVER_ERROR, userId
+                );
+            }
+
         }catch (Exception e) {
             log.error("====== setNicname ======", e);
+            return ApiResponseV2.error(ErrorCode.SERVER_ERROR, e.getMessage());
         }
-
     }
 }

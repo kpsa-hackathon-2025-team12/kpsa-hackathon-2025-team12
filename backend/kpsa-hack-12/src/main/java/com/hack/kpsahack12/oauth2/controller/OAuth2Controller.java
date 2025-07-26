@@ -56,21 +56,22 @@ public class OAuth2Controller {
         req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
         req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
 
-        boolean visited = memberService.visitedMember(userInfo.getId());
+        boolean visited = memberService.visitedMember(req.get("userId").toString());
 
         if(visited){ // true 면 이미 로그인 했던 적 상태면
+            memberService.incrementResponseCount(req.get("userId").toString());
             response.sendRedirect("https://naver.com");
         }
 
         int result = memberService.saveRegisterMember(req);
 
         if(result == 1) {
-            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
+            response.sendRedirect("https://naver.com?userId=" + req.get("userId").toString());
         }else{
             throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
         }
 
-        response.sendRedirect("https://google.com?userId=" + userInfo.getId());
+        response.sendRedirect("https://google.com?userId=" + req.get("userId").toString());
     }
 
 
@@ -83,7 +84,9 @@ public class OAuth2Controller {
             }
     )
     @GetMapping("/callback/kakao")
-    public void kakaoCallback(@RequestParam(required = false) String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void kakaoCallback(@RequestParam(required = false) String code,
+                              HttpServletRequest request,
+                              HttpServletResponse response) throws IOException {
 
         OAuth2TokenResponse oAuth2TokenResponse = kakaoAuthService.getAccessToken(code);
         log.info("카카오 콜백 인가 함수 호출");
@@ -91,28 +94,30 @@ public class OAuth2Controller {
         OAuth2UserResponse userInfo = kakaoAuthService.getUserInfo(oAuth2TokenResponse.getAccessToken());
         log.info("user Info : {}", userInfo);
 
-        // TODO DB 저장 userID
-
         Map<String,Object> req = new HashMap<>();
         req.put("userId", "kko_" + userInfo.getId());
         req.put("email", userInfo.getEmail() == null ? "" : userInfo.getEmail());
         req.put("name", userInfo.getName() == null ? "" : userInfo.getName());
 
-        boolean visited = memberService.visitedMember(userInfo.getId());
+        boolean visited = memberService.visitedMember(req.get("userId").toString());
+        String userId = req.get("userId").toString();
 
-        if(visited){ // true 면 이미 로그인 했던 적 상태면
-            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
+        if(visited) {
+            // 이미 로그인 했던 사용자인 경우
+            memberService.incrementResponseCount(userId);
+            response.sendRedirect("https://naver.com?userId=" + userId);
+            return; // 추가 처리 중단
         }
 
+        // 새 사용자 저장
         int result = memberService.saveRegisterMember(req);
 
         if(result == 1) {
-            response.sendRedirect("https://naver.com?userId=" + userInfo.getId());
-        }else{
+            response.sendRedirect("https://naver.com?userId=" + userId);
+        } else {
             throw new CustomException(ErrorCode.NOT_FOUND_USER_NAME);
         }
     }
-
 
     @Operation(
             summary = "카카오 로그인 Redirect URL 리턴",

@@ -47,8 +47,9 @@ public class Members {
                 .id(req.get("userId").toString())
                 .email(req.get("email").toString())
                 .name(req.get("name").toString())
-                .status(Status.REGISTER.getCode())
+                .status(Status.LOGIN.getCode())
                 .visited(1L)
+                .responseCnt(1L)
                 .build();
     }
 }

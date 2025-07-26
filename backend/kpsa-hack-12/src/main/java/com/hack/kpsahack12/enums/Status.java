@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Status {
-    REGISTER("REGISTER", "등록");
+    LOGIN("LOGIN", "로그인");
 
     private final String code;
     private final String message;
