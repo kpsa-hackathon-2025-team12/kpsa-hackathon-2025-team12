@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tomate/core/api/api_provider.dart';
@@ -40,6 +42,8 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   List<ChatMessage> _messages = [];
+  bool _showQuizButtons = false; // 퀴즈 버튼 표시 여부
+  bool _isSending = false; // 메시지 전송 중 플래그
 
   @override
   void dispose() {
@@ -47,6 +51,22 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  // 새 채팅 시작
+  void _startNewChat() {
+    setState(() {
+      _messages.clear();
+      _showQuizButtons = false; // 퀴즈 버튼 숨기기
+    });
+    // 스크롤을 맨 위로 이동
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   // 스크롤을 맨 아래로 이동
@@ -78,7 +98,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         response.data['data'] != null) {
       List<ChatMessage> newMessages = [];
       for (var messageData in response.data['data']) {
-        newMessages.add(ChatMessage.fromJson(messageData));
+        ChatMessage message = ChatMessage.fromJson(messageData);
+        // 빈 문자열이 아닌 메시지만 추가
+        if (message.memberLogs.trim().isNotEmpty) {
+          newMessages.add(message);
+        }
       }
       _addMessages(newMessages);
     }
@@ -88,10 +112,17 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
 
+    // 중복 실행 방지
+    if (_isSending) return;
+
+    setState(() {
+      _isSending = true;
+    });
+
     // 사용자 메시지를 먼저 추가
     _addMessages([
       ChatMessage(
-        memberLogs: message,
+        memberLogs: message.trim(),
         buttonType: 0,
         idx: DateTime.now().millisecondsSinceEpoch,
         type: 0, // 사용자 메시지
@@ -101,19 +132,27 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
     _messageController.clear();
 
     try {
-      // API 호출 (실제 API 엔드포인트에 맞게 수정 필요)
-      final response = await ref.read(apiProvider.notifier).postAsync(
-        '/chat/message',
-        {
-          "message": message,
-          "userId": "kko_3006418247",
-          "llmModel": "gemini-2.0-flash",
-        },
-      );
+      // API 호출 - 입력창에서 직접 보낼 때는 request 필드에 텍스트 전송
+      final response = await ref
+          .read(apiProvider.notifier)
+          .postAsync('/chat/prompt', {
+            "request": message.trim(),
+            "userId": "kko_4364192436",
+            "llmModel": "gemini-2.0-flash",
+          });
 
       _handleApiResponse(response);
+      // 직접 입력한 메시지에는 퀴즈 버튼 표시하지 않음
+      setState(() {
+        _showQuizButtons = false;
+      });
     } catch (e) {
-      print('메시지 전송 오류: $e');
+      // 메시지 전송 오류 처리
+    } finally {
+      // 전송 완료 후 플래그 리셋
+      setState(() {
+        _isSending = false;
+      });
     }
   }
 
@@ -123,6 +162,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF5),
+      drawer: _buildDrawer(),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFFCF5),
         elevation: 0,
@@ -134,6 +174,26 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             color: Colors.black,
           ),
         ),
+        leading: Builder(
+          builder: (context) => IconButton(
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+            icon: Icon(Icons.menu_outlined, size: 22),
+            padding: EdgeInsets.zero,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 12.0),
+            child: GestureDetector(
+              onTap: () {
+                _startNewChat();
+              },
+              child: Icon(Icons.add_outlined, size: 24),
+            ),
+          ),
+        ],
         centerTitle: true,
       ),
       body: SafeArea(
@@ -274,14 +334,17 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                                   onTap: () async {
                                     final response = await ref
                                         .read(apiProvider.notifier)
-                                        .postAsync('/chat/default', {
+                                        .postAsync('/chat/prompt', {
                                           "request": "1",
-                                          "userId": "kko_3006418247",
+                                          "userId": "kko_4364192436",
                                           "llmModel": "gemini-2.0-flash",
                                         });
 
                                     print(response);
                                     _handleApiResponse(response);
+                                    setState(() {
+                                      _showQuizButtons = true; // 퀴즈 버튼 표시
+                                    });
                                   },
                                   onTapDown: (_) {
                                     setState(() {
@@ -383,11 +446,11 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
             ),
             // 하단 채팅 입력창
             Transform.translate(
-              offset: Offset(0, keyboardHeight > 0 ? 50 : 0),
+              offset: Offset(0, keyboardHeight > 0 ? Platform.isAndroid ? 50 : 80 : 0),
               child: Container(
                 padding: EdgeInsets.fromLTRB(
                   26,
-                  16,
+                  Platform.isAndroid ? 16 : 0,
                   26,
                   keyboardHeight > 0 ? 0 : 48,
                 ),
@@ -425,29 +488,35 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                             // 입력창 클릭 시 스크롤을 맨 아래로 이동
                             _scrollToBottom();
                           },
-                          onSubmitted: (text) => _sendMessage(text),
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (text) async {
+                            if (text.trim().isNotEmpty && !_isSending) {
+                              await _sendMessage(text);
+                            }
+                          },
                         ),
                       ),
                     ),
                     SizedBox(width: 8),
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFE6E6E6),
-                        shape: OvalBorder(),
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () =>
-                              _sendMessage(_messageController.text),
-                          icon: Center(
-                            child: Icon(
-                              Icons.arrow_upward_outlined,
-                              color: Color(0xFF989898),
-                              size: 22,
-                            ),
+                    GestureDetector(
+                      onTap: () async {
+                        final text = _messageController.text;
+                        if (text.trim().isNotEmpty && !_isSending) {
+                          await _sendMessage(text);
+                        }
+                      },
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFE6E6E6),
+                          shape: OvalBorder(),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.arrow_upward_outlined,
+                            color: Color(0xFF989898),
+                            size: 22,
                           ),
                         ),
                       ),
@@ -521,7 +590,7 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
               ),
               padding: EdgeInsets.fromLTRB(19, 16, 19, 0),
               decoration: ShapeDecoration(
-                color: const Color(0xFFFFE8E8),
+                color: const Color(0xFFFFEEE1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(4),
@@ -531,13 +600,30 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
                   ),
                 ),
               ),
-              child: Text(
-                message.memberLogs,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message.memberLogs,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  // 퀴즈 버튼들 (type: 1 시스템 메시지이고 _showQuizButtons가 true일 때 표시)
+                  if (_showQuizButtons && message.type == 1) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildQuizButton('한 번 더'),
+                        SizedBox(width: 8),
+                        _buildQuizButton('이제 그만'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ],
               ),
             ),
             Positioned(
@@ -554,5 +640,152 @@ class _Home2ScreenState extends ConsumerState<Home2Screen> {
         ),
       );
     }
+  }
+
+  // 사이드 드로어 빌더
+  Widget _buildDrawer() {
+    return Drawer(
+      width: MediaQuery.of(context).size.width / 1.6,
+      backgroundColor: const Color(0xFF1E1E1E),
+      child: Column(
+        children: [
+          // 상단 여백
+          SizedBox(height: 60),
+
+          // 메뉴 항목들
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(Icons.edit_outlined, '새 채팅'),
+                _buildDrawerItem(Icons.search_outlined, '채팅 검색'),
+                _buildDrawerItem(Icons.library_books_outlined, 'AI 모델 변경'),
+
+                SizedBox(height: 20),
+
+                _buildDrawerItem(Icons.chat_outlined, '이야기가 하고 싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '생각 전환을 하고 싶어요.'),
+                _buildDrawerItem(Icons.chat_outlined, '나의 감정을 컨트롤 하기 힘들어.'),
+                _buildDrawerItem(Icons.chat_outlined, '오늘 많이 힘들었어..'),
+
+                SizedBox(height: 20),
+
+                _buildDrawerItem(Icons.chat_outlined, '난 대표님만 보면 숨이 막혀..'),
+                _buildDrawerItem(
+                  Icons.chat_outlined,
+                  '열심히 해도 왜 월급은 쥐 꼴만 할까..??',
+                ),
+              ],
+            ),
+          ),
+
+          // 하단 계정 정보
+          Container(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.blue,
+                  child: Text(
+                    'J',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '주승현',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      '2Level',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  // 드로어 메뉴 아이템 빌더
+  Widget _buildDrawerItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.white, size: 20),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        // 각 메뉴별 기능 추가 가능
+      },
+      contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 2),
+    );
+  }
+
+  // 퀴즈 버튼 빌더
+  Widget _buildQuizButton(String text) {
+    return GestureDetector(
+      onTap: () async {
+        if (text == '한 번 더') {
+          // "한 번 더" 클릭 시 생각 전환과 동일한 로직
+          final response = await ref.read(apiProvider.notifier).postAsync(
+            '/chat/prompt',
+            {
+              "request": "1",
+              "userId": "kko_4364192436",
+              "llmModel": "gemini-2.0-flash",
+            },
+          );
+
+          print(response);
+          _handleApiResponse(response);
+          setState(() {
+            _showQuizButtons = true; // 퀴즈 버튼 표시
+          });
+        } else {
+          // "이제 그만" 클릭 시 퀴즈 버튼 숨기기
+          setState(() {
+            _showQuizButtons = false;
+          });
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: const Color(0xFF4E4E4E), width: 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
   }
 }
