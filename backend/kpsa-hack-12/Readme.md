@@ -1,129 +1,99 @@
-# Database Schema Documentation
+# KPSA 해커톤 2025 - Team 12 프로젝트
 
-## Description
-이 문서는 데이터베이스 스키마의 설계와 테이블 간의 관계를 설명합니다. 이 스키마는 사용자 정보, 레벨, 증상, 행동, FCM 토큰 관리, 그리고 사용자 채팅 로그 등을 저장하고 관리하기 위해 설계되었습니다.
+## 📝 프로젝트 소개
+본 프로젝트는 KPSA 해커톤 2025에 참가한 12팀의 백엔드 서비스입니다. 사용자의 일기(다이어리) 작성과 감정 관리, 그리고 알림 서비스 등을 제공하는 어플리케이션의 서버 측 구현입니다.
 
----
 
-## Tables Overview
+## 🛠️ 기술 스택
+- **언어**: Java 17
+- **프레임워크**: Spring Boot
+- **데이터베이스**: MySQL (Docker 컨테이너로 실행)
+- **ORM**: Spring Data JPA
+- **의존성 주입**: Lombok
+- **클라우드**: AWS EC2
+- **컨테이너화**: Docker
+- **인증**: 소셜 로그인 (외부 API 연동)
+- **메시징**: Firebase Cloud Messaging (FCM)
 
-### 1. **`member`**
-회원 정보를 저장하는 테이블입니다.
 
-| Column        | Type         | Nullability | Description                          |
-|---------------|--------------|-------------|--------------------------------------|
-| `idx`         | BIGINT       | NOT NULL    | 순번 (Primary Key, AUTO_INCREMENT)  |
-| `id`          | BIGINT       | UNIQUE      | SNS Social ID (고유값)              |
-| `email`       | VARCHAR(255) | Nullable    | 이메일                               |
-| `name`        | VARCHAR(100) | Nullable    | 이름                                 |
-| `nickname`    | VARCHAR(50)  | Nullable    | 닉네임                               |
-| `birth`       | VARCHAR(10)  | Nullable    | 생년월일                             |
-| `gender`      | VARCHAR(5)   | Nullable    | 성별                                 |
-| `status`      | VARCHAR(20)  | NOT NULL    | 상태 (예: ACTIVE, INACTIVE)          |
-| `visited`     | BIGINT       | NOT NULL    | 방문 횟수                            |
-| `response_cnt`| BIGINT       | NOT NULL    | 대처 횟수                            |
-| `created_at`  | TIMESTAMP    | NOT NULL    | 생성 시각 (`CURRENT_TIMESTAMP`)     |
-| `updated_at`  | TIMESTAMP    | NOT NULL    | 업데이트 시각 (ON UPDATE CURRENT_TIMESTAMP) |
+## 📚 주요 기능
+### 1. 사용자 관리 (User Management)
+- 사용자 정보 관리
+- 소셜 로그인 지원
+- 회원 레벨 시스템
 
----
+### 2. 일기 관리 (Diary Management)
+- 일일 일기 작성 및 조회
+- 감정 점수 전/후 기록
+- 완료 항목 카운트
 
-### 2. **`Symptoms`**
-사용자가 가진 증상을 저장하는 테이블입니다.
+### 3. 데이터 분석 (Data Analysis)
+- 사용자 행동 데이터 수집 및 분석
+- 증상 관리
+- 위치 정보 연동
 
-| Column        | Type         | Nullability | Description   |
-|---------------|--------------|-------------|---------------|
-| `idx`         | BIGINT       | NOT NULL    | 순번 (Primary Key, AUTO_INCREMENT) |
-| `symptoms`    | VARCHAR(255) | Nullable    | 증상 이름     |
+### 4. 챗봇 서비스 (Chat Service)
+- 사용자와 대화 기능
+- 사용자 로그 저장
 
----
+### 5. 알림 서비스 (Notification)
+- Firebase Cloud Messaging을 통한 푸시 알림
+- 토큰 관리
 
-### 3. **`actions`**
-특정 상황 및 행동을 저장하는 테이블입니다.
 
-| Column        | Type         | Nullability | Description   |
-|---------------|--------------|-------------|---------------|
-| `idx`         | BIGINT       | NOT NULL    | 순번 (Primary Key, AUTO_INCREMENT) |
-| `space`       | VARCHAR(255) | Nullable    | 상황 이름     |
+## 🗂️ 프로젝트 구조
 
----
+```aiignore
+src/main/java/com/hack/kpsahack12/
+├── dialy/
+│   ├── controller/
+│   │   └── diaryController.java
+│   └── service/
+│       └── DiaryService.java
+├── dataInfo/
+│   ├── controller/
+│   │   └── dataInfoController.java
+│   └── service/
+│       └── dataInfoService.java
+├── fcm/
+│   ├── FCMService.java
+│   └── NotificationController.java
+├── member/
+│   ├── controller/
+│   │   ├── UserController.java
+│   │   └── UserChatController.java
+│   └── service/
+│       └── UserChatServiceImpl.java
+├── model/
+│   ├── dto/
+│   │   └── dialyResponse.java
+│   ├── entity/
+│   │   └── member/
+│   │       ├── dialy.java
+│   │       ├── LocationSpot.java
+│   │       ├── MemberLevel.java
+│   │       └── Symptoms.java
+│   └── repository/
+│       ├── dialyRepository.java
+│       ├── LocationSpotRepository.java
+│       ├── MemberLevelRepository.java
+│       └── MembersRepository.java
+├── enums/
+│   └── ErrorCode.java
+└── exception/
+    └── CustomException.java
+```
 
-### 4. **`member_level`**
-회원의 레벨, 선택 공간 및 점수를 관리하는 테이블입니다.
+## 📊 데이터베이스 구조
+프로젝트는 다음과 같은 테이블로 구성되어 있습니다:
+- **member**: 사용자 정보
+- **member_level**: 사용자 레벨 정보
+- **level_info**: 레벨별 정보
+- **dialy**: 사용자 일기
+- **location_spot**: 위치 정보
+- **symptoms**: 증상 정보
+- **member_llm_data**: 사용자 챗봇 대화 로그
+- **fcm_token_manage**: FCM 토큰 관리
 
-| Column         | Type         | Nullability | Description                          |
-|----------------|--------------|-------------|--------------------------------------|
-| `idx`          | BIGINT       | NOT NULL    | 순번 (Primary Key, AUTO_INCREMENT)  |
-| `member_id`    | BIGINT       | NOT NULL    | `member.id`와 연결된 외래 키         |
-| `level`        | VARCHAR(255) | Nullable    | 사용자 레벨                          |
-| `choice_space` | TEXT         | Nullable    | 사용자가 선택한 공간 (최대 6개)      |
-| `total_score`  | VARCHAR(255) | Nullable    | 사용자의 현재 점수                   |
-
-**Relationships**
-- Foreign Key: `member_id REFERENCES member(id) ON DELETE CASCADE`
-
----
-
-### 5. **`level_info`**
-레벨별 메타데이터를 저장하는 테이블입니다.
-
-| Column        | Type         | Nullability | Description               |
-|---------------|--------------|-------------|---------------------------|
-| `level`       | VARCHAR(255) | NOT NULL    | 사용자 레벨 (Primary Key) |
-| `one_line_text`| VARCHAR(255)| Nullable    | 한 줄 요약                |
-| `emotion_text` | VARCHAR(255)| Nullable    | 감성 메시지               |
-| `courage_text` | VARCHAR(255)| Nullable    | 용기 안내 메시지          |
-
----
-
-### 6. **`member_llm_data`**
-회원의 채팅 정보를 저장하는 테이블입니다.
-
-| Column        | Type         | Nullability | Description              |
-|---------------|--------------|-------------|--------------------------|
-| `idx`         | BIGINT       | NOT NULL    | 순번 (Primary Key, AUTO_INCREMENT) |
-| `member_id`   | BIGINT       | NOT NULL    | `member.id`와 연결된 외래 키        |
-| `member_logs` | MEDIUMTEXT   | Nullable    | 사용자의 채팅 로그        |
-
-**Relationships**
-- Foreign Key: `member_id REFERENCES member(id) ON DELETE CASCADE`
-
----
-
-### 7. **`fcm_token_manage`**
-Firebase Cloud Messaging(FCM) 토큰 관리를 위한 테이블입니다.
-
-| Column        | Type         | Nullability | Description            |
-|---------------|--------------|-------------|------------------------|
-| `member_id`   | BIGINT       | NOT NULL    | `member.id`와 연결된 외래 키  |
-| `token`       | VARCHAR(255) | Nullable    | FCM 토큰               |
-
-**Relationships**
-- Foreign Key: `member_id REFERENCES member(id) ON DELETE CASCADE`
 
 ---
-
-## Table Relationships
-1. `member` → `member_level`: **1 대 1 관계**
-    - 외래 키: `member_level.member_id REFERENCES member.id`
-
-2. `member` → `member_llm_data`: **1 대 다 관계**
-    - 외래 키: `member_llm_data.member_id REFERENCES member.id`
-
-3. `member` → `fcm_token_manage`: **1 대 1 관계**
-    - 외래 키: `fcm_token_manage.member_id REFERENCES member.id`
-
-4. `member_level` → `level_info`: **N 대 1 관계**
-    - 외래 키: `level_info.level REFERENCES member_level.level`
-
----
-
-## Features
-- **정규화된 구조**: 데이터 정합성을 유지하고 중복 데이터를 줄이도록 설계.
-- **확장 가능**: 추후 새로운 레벨, 증상, 행동 등을 쉽게 추가 가능.
-- **외래 키 연동**: 회원 삭제 시 관련 데이터를 자동으로 삭제 (`ON DELETE CASCADE`).
-- **FCM 통합**: Firebase Cloud Messaging을 사용한 푸시 알림 관리.
-
----
-
-## ERD Diagram
-아래는 간단한 테이블 간 관계를 시각화한 ERD 다이어그램입니다:
