@@ -9,7 +9,7 @@ import '../../../../common/widgets/common_app_bar.dart';
 class Home1Screen extends ConsumerStatefulWidget {
   final int level; // 단계별 카드 표시를 위한 파라미터 (1: 1단계, 2: 2단계)
 
-  const Home1Screen({super.key, this.level = 1}); // 레벨 수정
+  const Home1Screen({super.key, this.level = 2}); // 레벨 수정
 
   @override
   ConsumerState<Home1Screen> createState() => _Home1ScreenState();
