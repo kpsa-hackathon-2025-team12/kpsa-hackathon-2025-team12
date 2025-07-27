@@ -258,7 +258,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) {
               // level 파라미터 추출 (기본값: 1)
               final levelParam = state.uri.queryParameters['level'];
-              final level = int.tryParse(levelParam ?? '2') ?? 2; // 레벨 수정
+              final level = int.tryParse(levelParam ?? '1') ?? 1; // 레벨 수정
 
               return CustomTransitionPage(
                 child: Home1Screen(level: level),
